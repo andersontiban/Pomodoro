@@ -1,26 +1,3 @@
-// import TaskList from "../../components/TaskList"
-// import Head from "next/head"
-// import Header from "../../components/Header"
-// import Timer from "../../components/Timer"
-
-// export default function Home() {
-//     return (
-//         <>
-//             <h1>Glory to God</h1>
-//             <Head>
-//                 <title>FocusDeck</title>
-//             </Head>
-//             <div className="min-h-screen bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-white p-6">
-//                 <Header />
-//                 <main className="mt-10 max-w-2xl mx-auto space-y-12">
-//                     <TaskList />
-//                     <Timer />
-//                 </main>
-//             </div>
-//         </>
-        
-//     ) 
-// }
 "use client"
 
 import { useState } from 'react'
@@ -30,7 +7,9 @@ export default function Home() {
   const [artist, setArtist] = useState('')
   const [song, setSong] = useState('')
   const [lyrics, setLyrics] = useState('')
+  const [translatedLyrics, setTranslatedLyrics] = useState('')  // State to store translated lyrics
   const [loading, setLoading] = useState(false)
+  const [language, setLanguage] = useState('es')  // Default to Spanish, change as needed
 
   const handleSearch = async (e) => {
     e.preventDefault()
@@ -40,6 +19,10 @@ export default function Home() {
       const res = await fetch(`https://api.lyrics.ovh/v1/${artist}/${song}`)
       const data = await res.json()
       setLyrics(data.lyrics || 'No lyrics found.')
+      if (data.lyrics) {
+        // Call translation function after fetching lyrics
+        await translateLyrics(data.lyrics)
+      }
     } catch {
       setLyrics('Error fetching lyrics.')
     } finally {
@@ -47,13 +30,29 @@ export default function Home() {
     }
   }
 
+  const translateLyrics = async (lyrics) => {
+    try {
+      const res = await fetch("/api/translate", {  // Assuming an API route to handle translation
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ lyrics, language })
+      })
+      const data = await res.json()
+      setTranslatedLyrics(data.translatedLyrics || 'No translation found.')
+    } catch (error) {
+      console.error("Error during translation:", error)
+      setTranslatedLyrics('Error translating lyrics.')
+    }
+  }
+
   const reset = () => {
     setLyrics('')
+    setTranslatedLyrics('')
     setArtist('')
     setSong('')
   }
 
-  if (lyrics) {
+  if (lyrics || translatedLyrics) {
     return (
       <div className="h-screen w-screen bg-gradient-to-b from-indigo-900 to-black text-white flex flex-col">
         <header className="p-4 flex items-center">
@@ -63,7 +62,19 @@ export default function Home() {
           <h1 className="text-xl font-medium">{artist} – {song}</h1>
         </header>
         <div className="flex-1 overflow-y-auto px-6 py-8">
-          <pre className="text-2xl leading-relaxed whitespace-pre-wrap">{lyrics}</pre>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {/* Original Lyrics */}
+                <div className="bg-white/10 rounded-xl p-6 shadow-inner">
+                <h2 className="text-xl font-semibold mb-4 text-indigo-300">Original Lyrics</h2>
+                <pre className="text-lg leading-relaxed whitespace-pre-wrap text-white">{lyrics}</pre>
+                </div>
+
+                {/* Translated Lyrics */}
+                <div className="bg-white/10 rounded-xl p-6 shadow-inner">
+                <h2 className="text-xl font-semibold mb-4 text-indigo-300 capitalize">Translated ({language})</h2>
+                <pre className="text-lg leading-relaxed whitespace-pre-wrap text-white">{translatedLyrics}</pre>
+                </div>
+            </div>
         </div>
       </div>
     )
