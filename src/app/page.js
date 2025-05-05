@@ -72,30 +72,33 @@ export default function Home() {
   if (lyrics || translatedLyrics) {
     return (
 
-      <div className="h-screen w-screen bg-gradient-to-b from-indigo-900 to-black text-white flex flex-col">
+      <div className="h-screen w-screen bg-gradient-to-b from-black via-black to-indigo-500
+      text-white flex flex-col">
         <header className="p-4 flex items-center">
           <button onClick={reset} className="text-2xl mr-4 hover:text-indigo-300">
             <FaArrowLeft />
           </button>
           <h1 className="text-xl font-medium">{artist} – {song}</h1>
         </header>
-        <div className="flex-1 overflow-y-auto px-6 py-8">
-        {videoId && (
-                <div className="sticky top-0 z-10 px-6 pb-10 bg-black">
-                  <div className="aspect-w-16 aspect-h-9">
-                    <iframe
-                      width="100%"
-                      height="400"
-                      src={`https://www.youtube.com/embed/${videoId}`}
-                      title="YouTube video player"
-                      frameBorder="0"
-                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                      allowFullScreen
-                      className="rounded-xl shadow-lg"
-                    />
+        {/* <div className="flex-1 overflow-y-auto px-6 py-8"> */}
+        <div className="flex-1 overflow-y-auto py-8 flex justify-center">
+          <div className="w-full max-w-7xl px-4 md:px-10">
+            {videoId && (
+                  <div className="">
+                    <div className="aspect-w-16 aspect-h-9">
+                      <iframe
+                        width="100%"
+                        height="400"
+                        src={`https://www.youtube.com/embed/${videoId}`}
+                        title="YouTube video player"
+                        frameBorder="0"
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                        allowFullScreen
+                        className="rounded-xl shadow-lg"
+                      />
+                    </div>
                   </div>
-                </div>
-                )}
+                  )}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {/* Original Lyrics */}
                 <div className="bg-white/10 rounded-xl p-6 shadow-inner">
@@ -108,6 +111,7 @@ export default function Home() {
                 <h2 className="text-xl font-semibold mb-4 text-indigo-300 capitalize">Translated ({language})</h2>
                 <pre className="text-lg leading-relaxed whitespace-pre-wrap text-white">{translatedLyrics}</pre>
                 </div>
+            </div>
             </div>
         </div>
       </div>
