@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { FaMusic, FaArrowLeft } from 'react-icons/fa'
 
 export default function Home() {
+  const [resultsReady, setResultsReady] = useState(false);
   const [videoId, setVideoId] = useState(null);
   const [artist, setArtist] = useState('')
   const [song, setSong] = useState('')
@@ -17,34 +18,39 @@ export default function Home() {
     setLyrics('')
     setTranslatedLyrics('')
     setVideoId(null)
+    setResultsReady(false)
     setLoading(true)
   
     try {
-      const res = await fetch(`https://api.lyrics.ovh/v1/${artist}/${song}`)
-      const data = await res.json()
-      setLyrics(data.lyrics || 'No lyrics found.')
-      if (data.lyrics) {
-        await translateLyrics(data.lyrics)
-      }
-    } catch (error) {
-      console.error("Error fetching lyrics or translating:", error)
-      setLyrics('Error fetching lyrics.')
-      setTranslatedLyrics('Error translating lyrics.')
-    }
+      const lyricsRes = await fetch(`https://api.lyrics.ovh/v1/${artist}/${song}`)
+      const lyricsData = await lyricsRes.json()
+      setLyrics(lyricsData.lyrics || 'No lyrics found.')
   
-    try {
-      const res = await fetch('/api/youtube', {
+      if (lyricsData.lyrics) {
+        await translateLyrics(lyricsData.lyrics)
+      } else {
+        setTranslatedLyrics('No translation found.')
+      }
+  
+      const ytRes = await fetch('/api/youtube', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ query: `${song} ${artist} official` })
       })
-      const data = await res.json()
-      if (data.videoId) setVideoId(data.videoId)
+      const ytData = await ytRes.json()
+      if (ytData.videoId) setVideoId(ytData.videoId)
+  
+      // Mark everything as loaded
+      setResultsReady(true)
     } catch (error) {
-      console.error("Error fetching YouTube video:", error)
+      console.error("Error:", error)
+      setLyrics('Error fetching lyrics.')
+      setTranslatedLyrics('Error translating lyrics.')
     }
-    
+  
+    setLoading(false)
   }
+  
   
 
   const translateLyrics = async (lyrics) => {
@@ -69,9 +75,19 @@ export default function Home() {
     setSong('')
   }
 
-  if (lyrics || translatedLyrics) {
+  if (loading && !resultsReady) {
     return (
+      <div className="h-screen w-screen bg-black text-white flex items-center justify-center bg-gradient-to-b from-black via-black to-indigo-500">
+        <div className="flex flex-col items-center">
+          <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-indigo-500 border-opacity-50 mb-4 bg-gradient-to-b from-black via-black to-indigo-500" />
+          <p className="text-xl">Building your track...</p>
+        </div>
+      </div>
+    )
+  }
 
+  if (resultsReady) {
+    return (
       <div className="h-screen w-screen bg-gradient-to-b from-black via-black to-indigo-500
       text-white flex flex-col">
         <header className="p-4 flex items-center">
@@ -119,11 +135,10 @@ export default function Home() {
   }
 
   return (
-    <div className="h-screen w-screen bg-gradient-to-br from-indigo-800 via-purple-700 to-pink-600 flex items-center justify-center px-4">
+    <div className="h-screen w-screen bg-gradient-to-b to-indigo-500 flex items-center justify-center px-4">
       <div className="w-full max-w-2xl bg-white rounded-2xl shadow-2xl p-8">
         <div className="flex items-center mb-6">
-          <FaMusic className="text-pink-600 text-4xl mr-3" />
-          <h1 className="text-3xl font-bold text-gray-800">Lyric Translator</h1>
+          <h1 className="text-3xl font-bold text-gray-800">Song Translator</h1>
         </div>
         <form onSubmit={handleSearch} className="space-y-4">
           <input
@@ -131,21 +146,21 @@ export default function Home() {
             placeholder="Artist name"
             value={artist}
             onChange={e => setArtist(e.target.value)}
-            className="w-full px-5 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:border-pink-500 transition"
+            className="w-full px-5 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:border-pink-500 transition text-black"
           />
           <input
             type="text"
             placeholder="Song name"
             value={song}
             onChange={e => setSong(e.target.value)}
-            className="w-full px-5 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:border-pink-500 transition"
+            className="w-full px-5 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:border-pink-500 transition text-black"
           />
           <button
             type="submit"
-            className="w-full py-3 bg-pink-600 text-white font-semibold rounded-xl hover:bg-pink-700 transition"
+            className="w-full py-3 bg-indigo-500 text-white font-semibold rounded-xl hover:bg-pink-700 transition"
             disabled={loading || !artist || !song}
           >
-            {loading ? 'Searching…' : 'Search Lyrics'}
+            {loading ? 'Searching…' : 'Translate song'}
           </button>
         </form>
       </div>
