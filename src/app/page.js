@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { FaMusic, FaArrowLeft } from 'react-icons/fa'
 
 export default function Home() {
+  const [videoId, setVideoId] = useState(null);
   const [artist, setArtist] = useState('')
   const [song, setSong] = useState('')
   const [lyrics, setLyrics] = useState('')
@@ -14,21 +15,37 @@ export default function Home() {
   const handleSearch = async (e) => {
     e.preventDefault()
     setLyrics('')
+    setTranslatedLyrics('')
+    setVideoId(null)
     setLoading(true)
+  
     try {
       const res = await fetch(`https://api.lyrics.ovh/v1/${artist}/${song}`)
       const data = await res.json()
       setLyrics(data.lyrics || 'No lyrics found.')
       if (data.lyrics) {
-        // Call translation function after fetching lyrics
         await translateLyrics(data.lyrics)
       }
-    } catch {
+    } catch (error) {
+      console.error("Error fetching lyrics or translating:", error)
       setLyrics('Error fetching lyrics.')
-    } finally {
-      setLoading(false)
+      setTranslatedLyrics('Error translating lyrics.')
     }
+  
+    try {
+      const res = await fetch('/api/youtube', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ query: `${song} ${artist} official` })
+      })
+      const data = await res.json()
+      if (data.videoId) setVideoId(data.videoId)
+    } catch (error) {
+      console.error("Error fetching YouTube video:", error)
+    }
+    
   }
+  
 
   const translateLyrics = async (lyrics) => {
     try {
@@ -54,6 +71,7 @@ export default function Home() {
 
   if (lyrics || translatedLyrics) {
     return (
+
       <div className="h-screen w-screen bg-gradient-to-b from-indigo-900 to-black text-white flex flex-col">
         <header className="p-4 flex items-center">
           <button onClick={reset} className="text-2xl mr-4 hover:text-indigo-300">
@@ -62,6 +80,22 @@ export default function Home() {
           <h1 className="text-xl font-medium">{artist} – {song}</h1>
         </header>
         <div className="flex-1 overflow-y-auto px-6 py-8">
+        {videoId && (
+                <div className="sticky top-0 z-10 px-6 pb-10 bg-black">
+                  <div className="aspect-w-16 aspect-h-9">
+                    <iframe
+                      width="100%"
+                      height="400"
+                      src={`https://www.youtube.com/embed/${videoId}`}
+                      title="YouTube video player"
+                      frameBorder="0"
+                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                      allowFullScreen
+                      className="rounded-xl shadow-lg"
+                    />
+                  </div>
+                </div>
+                )}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {/* Original Lyrics */}
                 <div className="bg-white/10 rounded-xl p-6 shadow-inner">
