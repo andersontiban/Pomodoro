@@ -14,42 +14,48 @@ export default function Home() {
   const [language, setLanguage] = useState('es')  // Default to Spanish, change as needed
 
   const handleSearch = async (e) => {
-    e.preventDefault()
-    setLyrics('')
-    setTranslatedLyrics('')
-    setVideoId(null)
-    setResultsReady(false)
-    setLoading(true)
+    e.preventDefault();
+    setLyrics('');
+    setTranslatedLyrics('');
+    setVideoId(null);
+    setResultsReady(false);
+    setLoading(true);
   
     try {
-      const lyricsRes = await fetch(`https://api.lyrics.ovh/v1/${artist}/${song}`)
-      const lyricsData = await lyricsRes.json()
-      setLyrics(lyricsData.lyrics || 'No lyrics found.')
-  
-      if (lyricsData.lyrics) {
-        await translateLyrics(lyricsData.lyrics)
-      } else {
-        setTranslatedLyrics('No translation found.')
-      }
-  
-      const ytRes = await fetch('/api/youtube', {
+      // Fire both requests in parallel
+      const lyricsPromise = fetch(`https://api.lyrics.ovh/v1/${artist}/${song}`);
+      const ytPromise = fetch('/api/youtube', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ query: `${song} ${artist} official` })
-      })
-      const ytData = await ytRes.json()
-      if (ytData.videoId) setVideoId(ytData.videoId)
+      });
   
-      // Mark everything as loaded
-      setResultsReady(true)
+      const [lyricsRes, ytRes] = await Promise.all([lyricsPromise, ytPromise]);
+  
+      const lyricsData = await lyricsRes.json();
+      const ytData = await ytRes.json();
+  
+      if (lyricsData.lyrics) {
+        setLyrics(lyricsData.lyrics);
+        await translateLyrics(lyricsData.lyrics);
+      } else {
+        setLyrics('No lyrics found.');
+        setTranslatedLyrics('No translation found.');
+      }
+  
+      if (ytData.videoId) {
+        setVideoId(ytData.videoId);
+      }
+  
+      setResultsReady(true);
     } catch (error) {
-      console.error("Error:", error)
-      setLyrics('Error fetching lyrics.')
-      setTranslatedLyrics('Error translating lyrics.')
+      console.error("Error:", error);
+      setLyrics('Error fetching lyrics.');
+      setTranslatedLyrics('Error translating lyrics.');
     }
   
-    setLoading(false)
-  }
+    setLoading(false);
+  };
   
   
 
