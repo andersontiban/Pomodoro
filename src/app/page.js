@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { FaMusic, FaArrowLeft } from 'react-icons/fa'
+import Pricing from '../../components/pricing';
 
 export default function Home() {
   const [resultsReady, setResultsReady] = useState(false);
@@ -142,6 +143,7 @@ export default function Home() {
 
   return (
     <div className="h-screen w-screen bg-gradient-to-b to-indigo-500 flex items-center justify-center px-4">
+      <Pricing/>
       <div className="w-full max-w-2xl bg-white rounded-2xl shadow-2xl p-8">
         <div className="flex items-center mb-6">
           <h1 className="text-3xl font-bold text-gray-800">Song Translator</h1>

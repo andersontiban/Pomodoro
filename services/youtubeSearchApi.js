@@ -10,7 +10,7 @@ const YouTubeEmbed = ({ songTitle, artistName }) => {
   useEffect(() => {
     const fetchVideo = async () => {
       try {
-        const query = `${songTitle} ${artistName} official`;
+        const query = `${artistName} ${songTitle} lyrics`;
         const results = await GetListByKeyword(query, false, 1);
         const id = results.items[0]?.id;
         if (id) {
