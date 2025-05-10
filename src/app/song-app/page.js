@@ -1,15 +1,9 @@
 // app/song-app/page.js
-"use client"; // This is crucial for components with interactivity and hooks
+"use client"; 
 
 import { useState, useEffect } from 'react';
-import Head from 'next/head'; // Optional: For setting page title specifically for this page
-
-// You might want to install react-icons if you haven't: npm install react-icons
+import Head from 'next/head'; 
 import { FaArrowLeft } from 'react-icons/fa'; 
-
-// If you have a separate Pricing component, you'd import it.
-// For now, I'll comment it out as it wasn't part of the core app logic you shared first.
-// import Pricing from '../../components/pricing'; // Adjust path if you have this
 
 export default function SongTranslatorApp() {
   const [resultsReady, setResultsReady] = useState(false);
@@ -19,12 +13,11 @@ export default function SongTranslatorApp() {
   const [lyrics, setLyrics] = useState('');
   const [translatedLyrics, setTranslatedLyrics] = useState('');
   const [loading, setLoading] = useState(false);
-  const [language, setLanguage] = useState('es'); // Default to Spanish
+  const [language, setLanguage] = useState('es'); 
 
-  // API Endpoints (these would be in your Next.js API routes, e.g., app/api/youtube/route.js)
-  const LYRICS_API_URL = 'https://api.lyrics.ovh/v1/'; // External API
-  const YOUTUBE_API_ROUTE = '/api/youtube'; // Your Next.js backend route
-  const TRANSLATE_API_ROUTE = '/api/translate'; // Your Next.js backend route
+  const LYRICS_API_URL = 'https://api.lyrics.ovh/v1/'; 
+  const YOUTUBE_API_ROUTE = '/api/youtube'; 
+  const TRANSLATE_API_ROUTE = '/api/translate'; 
 
   const handleSearch = async (e) => {
     e.preventDefault();
@@ -35,14 +28,11 @@ export default function SongTranslatorApp() {
     setLoading(true);
 
     try {
-      // Fetch lyrics from external API (or your backend wrapper if you have one)
       const lyricsPromise = fetch(`${LYRICS_API_URL}${encodeURIComponent(artist)}/${encodeURIComponent(song)}`);
-      
-      // Fetch YouTube video ID from your Next.js API route
       const ytPromise = fetch(YOUTUBE_API_ROUTE, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ query: `${song} ${artist} official music video` })
+        body: JSON.stringify({ query: `${song} ${artist} official music video` }) // Changed query to be more specific
       });
 
       const [lyricsRes, ytRes] = await Promise.all([lyricsPromise, ytPromise]);
@@ -53,11 +43,10 @@ export default function SongTranslatorApp() {
       if (lyricsData.lyrics) {
         const cleanedLyrics = lyricsData.lyrics.replace(/\r\n/g, '\n').replace(/\r/g, '\n');
         setLyrics(cleanedLyrics);
-        // Translate the fetched lyrics using your Next.js API route
-        await translateLyrics(cleanedLyrics, language);
+        await translateLyrics(cleanedLyrics, language); // Pass language to translateLyrics
       } else {
         setLyrics('No lyrics found for this song.');
-        setTranslatedLyrics('Translation not available as no lyrics were found.');
+        setTranslatedLyrics('No translation found as no lyrics were found.');
       }
 
       if (ytData.videoId) {
@@ -71,13 +60,13 @@ export default function SongTranslatorApp() {
       console.error("Error during search:", error);
       setLyrics('An error occurred while fetching lyrics.');
       setTranslatedLyrics('An error occurred while translating lyrics.');
-      setResultsReady(true); // Show results page even with error to display messages
+      setResultsReady(true); 
     }
-
     setLoading(false);
   };
 
-  const translateLyrics = async (lyricsToTranslate, targetLanguage) => {
+  // Updated to accept language parameter, matching your original logic
+  const translateLyrics = async (lyricsToTranslate, targetLanguage) => { 
     if (!lyricsToTranslate.trim()) {
         setTranslatedLyrics('No lyrics to translate.');
         return;
@@ -86,7 +75,7 @@ export default function SongTranslatorApp() {
       const res = await fetch(TRANSLATE_API_ROUTE, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ lyrics: lyricsToTranslate, language: targetLanguage })
+        body: JSON.stringify({ lyrics: lyricsToTranslate, language: targetLanguage }) // Use targetLanguage
       });
       const data = await res.json();
       if (res.ok) {
@@ -101,20 +90,22 @@ export default function SongTranslatorApp() {
     }
   };
 
-  const resetSearch = () => {
+  // This function resets the state to go back to the search form
+  const resetSearchAndInputs = () => {
     setResultsReady(false);
+    // Clear inputs as per your original reset logic
     setArtist('');
     setSong('');
+    // Clear results
     setLyrics('');
     setTranslatedLyrics('');
     setVideoId(null);
-    // Don't reset loading state here, it's handled by handleSearch
   };
 
-  // UI for Loading State
+  // --- UI for Loading State (Kept from my previous version) ---
   if (loading && !resultsReady) {
     return (
-      <div className="min-h-screen w-full bg-black text-white flex flex-col items-center justify-center p-4 bg-gradient-to-b from-black via-black to-indigo-900">
+      <div className="h-screen w-full bg-black text-white flex flex-col items-center justify-center p-4 bg-gradient-to-b from-black via-black to-indigo-900 overflow-hidden">
         <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-indigo-500 border-opacity-75 mb-4"></div>
         <p className="text-xl text-indigo-300">Building your track...</p>
         <p className="text-sm text-slate-400 mt-2">Fetching lyrics, video, and translating...</p>
@@ -122,83 +113,62 @@ export default function SongTranslatorApp() {
     );
   }
 
-  // UI for Results View
+  // --- UI for Results View (Merged) ---
   if (resultsReady) {
     return (
-      <>
-        <Head>
-          <title>{artist ? `${artist} - ${song}` : "Translation Results"} | Song Translator</title>
-        </Head>
-        <div className="min-h-screen w-full bg-gradient-to-br from-black via-slate-900 to-indigo-900 text-white flex flex-col selection:bg-pink-500 selection:text-white">
-          <header className="p-4 sm:p-6 flex items-center sticky top-0 bg-black/70 backdrop-blur-md z-10 shadow-lg">
-            <button 
-              onClick={resetSearch} 
-              className="text-2xl sm:text-3xl mr-3 sm:mr-4 p-2 rounded-full hover:bg-indigo-700 hover:text-indigo-100 transition-all duration-200"
-              aria-label="Go back to search"
-            >
-              <FaArrowLeft />
-            </button>
-            <h1 className="text-lg sm:text-xl font-medium truncate">
-              {artist && song ? `${artist} – ${song}` : "Translation Results"}
-            </h1>
-          </header>
+      <div className="h-screen w-screen bg-gradient-to-b from-black via-black to-indigo-500 text-white flex flex-col">
+  <header className="p-4 flex items-center">
+    <button onClick={resetSearchAndInputs} className="text-2xl mr-4 hover:text-indigo-300">
+      <FaArrowLeft />
+    </button>
+    <h1 className="text-xl font-medium">{artist} – {song}</h1>
+  </header>
 
-          <main className="flex-1 p-4 sm:p-6 lg:p-8 overflow-y-auto">
-            {/* Video Section */}
-            {videoId && (
-              <div className="w-full max-w-4xl mx-auto mb-6 sm:mb-8">
-                <div className="aspect-w-16 aspect-h-9 bg-slate-800 rounded-xl shadow-2xl overflow-hidden border border-indigo-700">
-                  <iframe
-                    width="100%"
-                    height="100%" // Tailwind aspect ratio classes handle this
-                    src={`https://www.youtube.com/embed/$${videoId}`}
-                    title="YouTube video player"
-                    frameBorder="0"
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                    allowFullScreen
-                    className="w-full h-full"
-                  />
-                </div>
-              </div>
-            )}
-            {!videoId && !loading && (
-                 <div className="w-full max-w-4xl mx-auto mb-6 sm:mb-8 p-4 bg-slate-800/50 rounded-xl text-center text-slate-400">
-                    No video found for this song, or video search is disabled.
-                 </div>
-            )}
+  {/* Video Section */}
+  {videoId && (
+    <div className="w-full max-w-7xl mx-auto px-4 md:px-10">
+      <div className="aspect-w-16 aspect-h-9 mb-6">
+        <iframe
+          width="100%"
+          height="400"
+          src={`https://www.youtube.com/embed/${videoId}`}
+          title="YouTube video player"
+          frameBorder="0"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+          allowFullScreen
+          className="rounded-xl shadow-lg w-full"
+        />
+      </div>
+    </div>
+  )}
 
+  {/* Scrollable Lyrics Section */}
+<div className="flex-1 overflow-y-auto px-4 md:px-10 pb-8">
+  <div className="w-full max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-6">
+    <div className="bg-white/10 rounded-xl p-6 shadow-inner">
+      <h2 className="text-xl font-semibold mb-4 text-indigo-500 text-center">Original</h2>
+      <pre className="text-md leading-relaxed whitespace-pre-wrap text-white">{lyrics}</pre>
+    </div>
+    <div className="bg-white/10 rounded-xl p-6 shadow-inner">
+      <h2 className="text-xl font-semibold mb-4 text-pink-400 capitalize text-center">Translated ({language})</h2>
+      <pre className="text-md leading-relaxed whitespace-pre-wrap text-white">{translatedLyrics}</pre>
+    </div>
+  </div>
+</div>
+</div>
 
-            {/* Lyrics Section */}
-            <div className="w-full max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 lg:gap-8">
-              <div className="bg-slate-800/50 rounded-xl p-4 sm:p-6 shadow-xl border border-slate-700">
-                <h2 className="text-xl sm:text-2xl font-semibold mb-3 sm:mb-4 text-indigo-300">Original Lyrics</h2>
-                <pre className="text-sm sm:text-base leading-relaxed whitespace-pre-wrap text-slate-200 overflow-x-auto max-h-[60vh] sm:max-h-[70vh] p-1 custom-scrollbar">{lyrics || "No original lyrics loaded."}</pre>
-              </div>
-              <div className="bg-slate-800/50 rounded-xl p-4 sm:p-6 shadow-xl border border-slate-700">
-                <h2 className="text-xl sm:text-2xl font-semibold mb-3 sm:mb-4 text-pink-400 capitalize">Translated ({language})</h2>
-                <pre className="text-sm sm:text-base leading-relaxed whitespace-pre-wrap text-slate-200 overflow-x-auto max-h-[60vh] sm:max-h-[70vh] p-1 custom-scrollbar">{translatedLyrics || "No translation loaded."}</pre>
-              </div>
-            </div>
-          </main>
-           <footer className="p-4 text-center text-xs text-slate-500">
-             Song Translator App &copy; {new Date().getFullYear()}
-           </footer>
-        </div>
-      </>
-    );
+    )
   }
 
-  // UI for Initial Search Form
   return (
     <>
       <Head>
         <title>Translate a Song | Song Translator</title>
       </Head>
-      <div className="min-h-screen w-full bg-gradient-to-br from-black via-indigo-950 to-pink-950 flex items-center justify-center p-4 selection:bg-pink-500 selection:text-white">
-        {/* <Pricing/> // If you want to include pricing here */}
+      <div className="min-h-screen w-full bg-gradient-to-b from-black via-black to-indigo-500 flex items-center justify-center p-4 selection:bg-pink-500 selection:text-white">
         <div className="w-full max-w-md sm:max-w-lg bg-slate-900/70 backdrop-blur-lg rounded-2xl shadow-2xl p-6 sm:p-8 border border-indigo-700/50">
           <div className="flex items-center mb-6">
-            {/* Icon can go here */}
+            {/* <FaMusic className="text-3xl text-pink-500 mr-3" /> Optional icon from your original */}
             <h1 className="text-2xl sm:text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-pink-500">Song Translator</h1>
           </div>
           <form onSubmit={handleSearch} className="space-y-4 sm:space-y-5">
@@ -235,7 +205,6 @@ export default function SongTranslatorApp() {
                 <option value="it">Italian</option>
                 <option value="ru">Russian</option>
                 <option value="zh">Chinese (Simplified)</option>
-                {/* Add more languages as needed */}
               </select>
             </div>
             <button
@@ -243,32 +212,30 @@ export default function SongTranslatorApp() {
               className="w-full py-3 bg-gradient-to-r from-indigo-600 to-pink-600 text-white font-semibold rounded-xl hover:from-indigo-500 hover:to-pink-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-slate-900 focus:ring-pink-500 transition-all duration-300 ease-in-out disabled:opacity-60 disabled:cursor-not-allowed"
               disabled={loading || !artist || !song}
             >
-              {loading ? 'Searching...' : 'Translate Song'}
+              {loading ? 'Searching…' : 'Translate Song'}
             </button>
           </form>
         </div>
       </div>
-      {/* Basic custom scrollbar styling (optional, can be in globals.css) */}
       <style jsx global>{`
         .custom-scrollbar::-webkit-scrollbar {
           width: 8px;
           height: 8px;
         }
         .custom-scrollbar::-webkit-scrollbar-track {
-          background: rgba(51, 65, 85, 0.3); /* slate-700 with opacity */
+          background: rgba(51, 65, 85, 0.2); /* Lighter track for the new background */
           border-radius: 10px;
         }
         .custom-scrollbar::-webkit-scrollbar-thumb {
-          background: #4f46e5; /* indigo-600 */
+          background: #6366f1; /* Indigo-500 for thumb */
           border-radius: 10px;
         }
         .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-          background: #ec4899; /* pink-500 */
+          background: #ec4899; /* Pink-500 for hover */
         }
-        /* For Firefox */
         .custom-scrollbar {
           scrollbar-width: thin;
-          scrollbar-color: #4f46e5 rgba(51, 65, 85, 0.3);
+          scrollbar-color: #6366f1 rgba(51, 65, 85, 0.2);
         }
       `}</style>
     </>

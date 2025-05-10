@@ -2,13 +2,15 @@
 'use client'
 // Components that use hooks like useState or useEffect need to be Client Components.
 // We can define them in the same file or import them from separate files.
+import Head from 'next/head'; 
+import Link from 'next/link';
+import Image from 'next/image'; 
+import { useState, useEffect } from 'react'; 
 
 // Navbar Component (Client Component)
-// If in a separate file (e.g., components/Navbar.js), add "use client"; at the top of that file.
 const Navbar = ({ appUrl }) => {
-  "use client"; // Add this directive if Navbar is in the same file and uses hooks
+  // "use client"; // Not needed here if Navbar is defined within a client component or this whole file is client
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  // useEffect can also be used here if needed for client-side effects
 
   return (
     <header className="bg-white shadow-md sticky top-0 z-50">
@@ -23,7 +25,7 @@ const Navbar = ({ appUrl }) => {
             <a href="#pricing" className="nav-link text-slate-600 hover:text-indigo-600 font-medium transition-colors">Pricing</a>
             <a href="#contact" className="nav-link text-slate-600 hover:text-indigo-600 font-medium transition-colors">Contact</a>
             <Link href={appUrl}>
-              <span className="bg-indigo-600 hover:bg-pink-500 text-white font-semibold py-2 px-5 rounded-full transition-colors duration-300 ease-in-out cursor-pointer">Try App</span>
+              <span className="bg-indigo-600 hover:bg-pink-500 text-white font-semibold py-2 px-5 rounded-full transition-colors duration-300 ease-in-out cursor-pointer">Login</span>
             </Link>
           </nav>
           <div className="md:hidden">
@@ -55,68 +57,28 @@ const Navbar = ({ appUrl }) => {
   );
 };
 
-// Footer Component (Client Component)
-// If in a separate file (e.g., components/Footer.js), add "use client"; at the top of that file.
-const Footer = () => {
-  "use client"; // Add this directive if Footer is in the same file and uses hooks
-  const [currentYear, setCurrentYear] = useState('');
-
-  useEffect(() => {
-    setCurrentYear(new Date().getFullYear().toString());
-  }, []);
-
-  return (
-    <footer className="footer bg-slate-800 text-slate-400 py-12 sm:py-16" id="contact">
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8 text-center">
-        <div className="mb-6">
-          <Link href="/">
-            <span className="text-xl font-bold text-indigo-400 cursor-pointer">Song<span className="text-pink-400">Translator</span></span>
-          </Link>
-        </div>
-        <ul className="flex justify-center space-x-4 sm:space-x-6 mb-6">
-          <li><a href="#" className="hover:text-indigo-300 transition-colors">About Us</a></li>
-          <li><a href="#" className="hover:text-indigo-300 transition-colors">Contact</a></li>
-          <li><a href="#" className="hover:text-indigo-300 transition-colors">Privacy Policy</a></li>
-          <li><a href="#" className="hover:text-indigo-300 transition-colors">Terms of Service</a></li>
-        </ul>
-        <p className="text-sm">
-          &copy; {currentYear} Song Translator. All rights reserved.
-        </p>
-        <p className="text-xs mt-1"><em>Note: This is a fictional service for demonstration.</em></p>
-      </div>
-    </footer>
-  );
-};
-
-
-// These can remain Server Components if they don't use client-side hooks directly
-import Head from 'next/head'; // Still used for <title>, <meta> in Client or Server Components rendered by a page
-import Link from 'next/link';
-import Image from 'next/image'; // For optimized images
-import { useState, useEffect } from 'react'; // Keep for Navbar and Footer if defined in same file
-
-// HeroSection, FeaturesSection, etc., can be defined here or imported
-// If they don't use hooks, they are Server Components by default in the App Router.
+// HeroSection, FeaturesSection, etc. (Server Components by default if no client hooks)
 
 const HeroSection = ({ appUrl }) => (
-  <section className="hero bg-gradient-to-b from-dark-purple-start via-dark-purple-mid to-dark-purple-end text-white pt-24 pb-16 sm:pt-32 sm:pb-20 text-center overflow-hidden">
+  // Changed background gradient to shades of green
+  <section className="hero bg-gradient-to-b from-black via-black to-indigo-500 text-white pt-24 pb-16 sm:pt-32 sm:pb-20 text-center overflow-hidden">
     <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
       <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold mb-6 leading-tight">
         Unlock the Music. <span className="block sm:inline">Instantly Translate Songs.</span>
       </h1>
-      <p className="text-lg sm:text-xl text-indigo-200 mb-10 max-w-2xl mx-auto">
+      {/* Adjusted subtitle text color for better contrast on green if needed */}
+      <p className="text-lg sm:text-xl text-green-100 mb-10 max-w-2xl mx-auto"> 
         Dive deeper into the world of music. Understand lyrics in your chosen language, watch official videos,
         and connect with artists like never before.
       </p>
       <Link href={appUrl}>
+        {/* CTA button color can remain pink or be adjusted to complement green */}
         <span className="bg-pink-500 hover:bg-pink-600 text-white font-semibold py-3 px-8 rounded-full text-lg shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300 ease-in-out cursor-pointer">
           Get Started Free
         </span>
       </Link>
       <div className="mt-12 sm:mt-16 max-w-3xl mx-auto">
         <div className="bg-white p-2 sm:p-3 rounded-xl shadow-2xl">
-          {/* Replace with Next/Image if the image is in /public */}
-          {/* Make sure the image path is correct if using public folder e.g. /app-screenshot.png */}
           <img src="https://placehold.co/800x450/E2E8F0/4A5568?text=App+Screenshot+Here" alt="Song Translator App Preview" className="rounded-lg w-full h-auto" />
           {/* Example with Next/Image (assuming image is in public/app-preview.png):
           <Image src="/app-preview.png" alt="Song Translator App Preview" width={800} height={450} className="rounded-lg" />
@@ -135,25 +97,21 @@ const FeaturesSection = () => (
         <p className="text-lg text-slate-600 max-w-xl mx-auto">Discover a new way to experience music from around the globe.</p>
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-        {/* Feature Item 1 */}
         <div className="bg-white p-6 rounded-xl shadow-lg hover:shadow-2xl transition-shadow duration-300 text-center">
           <div className="text-4xl text-indigo-500 mb-4">🎤</div>
           <h3 className="text-xl font-semibold text-slate-800 mb-2">Instant Lyric Translation</h3>
           <p className="text-slate-600 text-sm">Translate song lyrics into multiple languages with just a few clicks. Understand the meaning behind the melodies.</p>
         </div>
-        {/* Feature Item 2 */}
         <div className="bg-white p-6 rounded-xl shadow-lg hover:shadow-2xl transition-shadow duration-300 text-center">
           <div className="text-4xl text-indigo-500 mb-4">▶️</div>
           <h3 className="text-xl font-semibold text-slate-800 mb-2">YouTube Video Integration</h3>
           <p className="text-slate-600 text-sm">Watch the official music video directly alongside the original and translated lyrics for a complete experience.</p>
         </div>
-        {/* Feature Item 3 */}
         <div className="bg-white p-6 rounded-xl shadow-lg hover:shadow-2xl transition-shadow duration-300 text-center">
           <div className="text-4xl text-indigo-500 mb-4">🌍</div>
           <h3 className="text-xl font-semibold text-slate-800 mb-2">Vast Music Library</h3>
           <p className="text-slate-600 text-sm">Access lyrics for millions of songs across various genres and artists, powered by a comprehensive database.</p>
         </div>
-        {/* Feature Item 4 */}
         <div className="bg-white p-6 rounded-xl shadow-lg hover:shadow-2xl transition-shadow duration-300 text-center">
           <div className="text-4xl text-indigo-500 mb-4">💡</div>
           <h3 className="text-xl font-semibold text-slate-800 mb-2">Simple & Intuitive</h3>
@@ -172,19 +130,16 @@ const HowItWorksSection = () => (
         <p className="text-lg text-slate-600 max-w-xl mx-auto">Start your musical journey in minutes.</p>
       </div>
       <div className="flex flex-col md:flex-row justify-around items-start gap-8 md:gap-12">
-        {/* Step 1 */}
         <div className="text-center flex-1 max-w-xs mx-auto">
           <div className="bg-pink-500 text-white w-16 h-16 rounded-full flex items-center justify-center text-2xl font-bold mx-auto mb-6 shadow-md">1</div>
           <h3 className="text-xl font-semibold text-slate-800 mb-2">Enter Song Details</h3>
           <p className="text-slate-600 text-sm">Type in the name of the artist and the song you want to translate.</p>
         </div>
-        {/* Step 2 */}
         <div className="text-center flex-1 max-w-xs mx-auto">
           <div className="bg-pink-500 text-white w-16 h-16 rounded-full flex items-center justify-center text-2xl font-bold mx-auto mb-6 shadow-md">2</div>
           <h3 className="text-xl font-semibold text-slate-800 mb-2">Choose Your Language</h3>
           <p className="text-slate-600 text-sm">Select your desired language for translation from our extensive list.</p>
         </div>
-        {/* Step 3 */}
         <div className="text-center flex-1 max-w-xs mx-auto">
           <div className="bg-pink-500 text-white w-16 h-16 rounded-full flex items-center justify-center text-2xl font-bold mx-auto mb-6 shadow-md">3</div>
           <h3 className="text-xl font-semibold text-slate-800 mb-2">Enjoy & Explore</h3>
@@ -203,23 +158,19 @@ const PricingSection = ({ appUrl, signUpUrl }) => (
         <p className="text-lg text-slate-600 max-w-xl mx-auto">Choose a plan that suits your music exploration needs.</p>
       </div>
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-stretch">
-        {/* Pricing Plan 1: Free */}
         <div className="bg-white p-8 rounded-xl shadow-lg flex flex-col transition-transform duration-300 hover:scale-105">
           <h3 className="text-2xl font-semibold text-indigo-600 mb-2">Free Tier</h3>
           <p className="text-4xl font-bold text-slate-800 mb-1">$0<span className="text-lg font-normal text-slate-500">/month</span></p>
           <p className="text-slate-600 text-sm mb-6 min-h-[40px]">Get a taste of music translation.</p>
           <ul className="space-y-3 text-slate-600 text-sm mb-8 flex-grow">
-            <li className="flex items-center"><svg className="w-5 h-5 text-green-500 mr-2" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd"></path></svg>Translate up to 5 songs/day</li>
+            <li className="flex items-center"><svg className="w-5 h-5 text-green-500 mr-2" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd"></path></svg>Translate up to 3 songs/day</li>
             <li className="flex items-center"><svg className="w-5 h-5 text-green-500 mr-2" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd"></path></svg>Access to 5 common languages</li>
             <li className="flex items-center"><svg className="w-5 h-5 text-green-500 mr-2" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd"></path></svg>YouTube video integration</li>
-            <li className="flex items-center"><svg className="w-5 h-5 text-green-500 mr-2" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd"></path></svg>Community support</li>
           </ul>
           <Link href={signUpUrl || appUrl}>
             <span className="w-full bg-indigo-500 hover:bg-indigo-600 text-white font-semibold py-3 px-6 rounded-lg transition-colors text-center cursor-pointer block">Start for Free</span>
           </Link>
         </div>
-
-        {/* Pricing Plan 2: Pro Monthly (Popular) */}
         <div className="bg-white p-8 rounded-xl shadow-2xl flex flex-col ring-2 ring-pink-500 relative transition-transform duration-300 hover:scale-105">
           <div className="absolute top-0 -translate-y-1/2 left-1/2 -translate-x-1/2 bg-pink-500 text-white text-xs font-semibold px-3 py-1 rounded-full uppercase">Most Popular</div>
           <h3 className="text-2xl font-semibold text-pink-500 mb-2">Pro Monthly</h3>
@@ -236,8 +187,6 @@ const PricingSection = ({ appUrl, signUpUrl }) => (
             <span className="w-full bg-pink-500 hover:bg-pink-600 text-white font-semibold py-3 px-6 rounded-lg transition-colors text-center cursor-pointer block">Go Pro</span>
           </Link>
         </div>
-
-        {/* Pricing Plan 3: Pro Annually */}
         <div className="bg-white p-8 rounded-xl shadow-lg flex flex-col transition-transform duration-300 hover:scale-105">
           <h3 className="text-2xl font-semibold text-indigo-600 mb-2">Pro Annually</h3>
           <p className="text-4xl font-bold text-slate-800 mb-1">$99<span className="text-lg font-normal text-slate-500">/year</span></p>
@@ -283,21 +232,12 @@ export default function LandingPage() {
 
   return (
     <>
-      {/* For App Router, metadata is often handled in layout.js or page.js metadata export.
-          However, next/head can still be used for dynamic head tags in client components or pages.
-          If this page is a Server Component, consider using the metadata export:
-          export const metadata = { title: 'My Page Title', description: '...' }; 
-          For simplicity in this direct conversion, we'll keep Head here.
-      */}
       <Head>
         <title>Song Translator - Understand Music in Any Language</title>
         <meta name="description" content="Instantly translate your favorite songs, understand lyrics in any language, and watch official music videos with Song Translator." />
         <link rel="icon" href="/favicon.ico" /> {/* Make sure to have a favicon in your /public folder */}
       </Head>
 
-      {/* It's good practice to extract Navbar and Footer to a Layout component (app/layout.js) 
-          if they are shared across multiple pages. For a single landing page, this is fine.
-      */}
       <Navbar appUrl={appUrl} />
       <main>
         <HeroSection appUrl={appUrl} />
@@ -306,7 +246,6 @@ export default function LandingPage() {
         <PricingSection appUrl={appUrl} signUpUrl={signUpUrl} />
         <CallToActionSection appUrl={appUrl} />
       </main>
-      <Footer />
     </>
   );
 }
