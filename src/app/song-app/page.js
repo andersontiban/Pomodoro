@@ -105,7 +105,7 @@ export default function SongTranslatorApp() {
   // --- UI for Loading State (Kept from my previous version) ---
   if (loading && !resultsReady) {
     return (
-      <div className="h-screen w-full bg-black text-white flex flex-col items-center justify-center p-4 bg-gradient-to-b from-black via-black to-indigo-900 overflow-hidden">
+      <div className="h-screen w-full bg-black text-white flex flex-col items-center justify-center p-4 bg-gradient-to-b from-black via-black to-indigo-500 overflow-hidden">
         <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-indigo-500 border-opacity-75 mb-4"></div>
         <p className="text-xl text-indigo-300">Building your track...</p>
         <p className="text-sm text-slate-400 mt-2">Fetching lyrics, video, and translating...</p>

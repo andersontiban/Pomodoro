@@ -24,7 +24,7 @@ const Navbar = ({ appUrl }) => {
             <a href="#how-it-works" className="nav-link text-slate-600 hover:text-indigo-600 font-medium transition-colors">How It Works</a>
             <a href="#pricing" className="nav-link text-slate-600 hover:text-indigo-600 font-medium transition-colors">Pricing</a>
             <a href="#contact" className="nav-link text-slate-600 hover:text-indigo-600 font-medium transition-colors">Contact</a>
-            <Link href={appUrl}>
+            <Link href="/login">
               <span className="bg-indigo-600 hover:bg-pink-500 text-white font-semibold py-2 px-5 rounded-full transition-colors duration-300 ease-in-out cursor-pointer">Login</span>
             </Link>
           </nav>
@@ -71,7 +71,7 @@ const HeroSection = ({ appUrl }) => (
         Dive deeper into the world of music. Understand lyrics in your chosen language, watch official videos,
         and connect with artists like never before.
       </p>
-      <Link href={appUrl}>
+      <Link href="/sign-up">
         {/* CTA button color can remain pink or be adjusted to complement green */}
         <span className="bg-pink-500 hover:bg-pink-600 text-white font-semibold py-3 px-8 rounded-full text-lg shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300 ease-in-out cursor-pointer">
           Get Started Free
