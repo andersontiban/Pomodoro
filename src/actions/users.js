@@ -24,3 +24,26 @@ export async function createAccountAction(formData) {
         return { errorMessage: "An unexpected error occurred." };
     }
 }
+
+export async function loginAction(formData) {
+    try {
+
+        const supabase = await createClient()
+
+         const data = {
+        email: formData.get('email'),
+        password: formData.get('password'),
+        }
+
+        const { error } = await supabase.auth.signInWithPassword(data)
+
+        if (error) {
+            return { errorMessage: error.message };
+        }
+
+        return { success: true };
+    } catch (error) {
+        console.error("Unexpected error during sign up:", error);
+        return { errorMessage: "An unexpected error occurred." };
+    }
+}

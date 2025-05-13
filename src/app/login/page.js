@@ -7,6 +7,8 @@ import Head from 'next/head';
 // import { FaEnvelope, FaLock } from 'react-icons/fa';
 
 export default function LoginPage() {
+  const router = useRouter();
+  const [isPending, startTransition] = useTransition()
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
@@ -24,19 +26,23 @@ export default function LoginPage() {
         return;
     }
 
-    // --- TODO: Implement actual login logic here ---
-    // This would typically involve:
-    // 1. Calling your backend API (e.g., /api/auth/login)
-    // 2. Handling success (e.g., redirecting to app, storing session/token)
-    // 3. Handling errors (e.g., "Invalid credentials")
     console.log("Login attempt with:", { email, password });
+    const formData = new FormData(e.target);
     try {
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1500));
-      // Example: const response = await fetch('/api/auth/login', { method: 'POST', ... });
-      // if (response.ok) { /* redirect or set user state */ } else { /* setError('Invalid credentials') */ }
+      startTransition(async () => {
+        const {errorMessage} = await loginAction(formData)
+
+        if (errorMessage) {
+          console.log(errorMessage)
+        } else {
+          router.push('/')
+          console.log("successfully logged in! :)")
+        }
+
+
+      })
       
-      // On successful login, you would redirect to the main app
+
       alert("Login successful (mock)! You would typically be redirected to the app.");
       setEmail('');
       setPassword('');

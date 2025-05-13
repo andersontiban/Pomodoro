@@ -30,9 +30,6 @@ export default function SignupPage() {
       setLoading(false);
       return;
     }
-
-    const formData = new FormData(e.target);
-
     // Basic email validation
     if (!/\S+@\S+\.\S+/.test(email)) {
         setError("Please enter a valid email address.");
@@ -49,6 +46,7 @@ export default function SignupPage() {
 
 
     console.log("Signup attempt with:", { name, email, password });
+    const formData = new FormData(e.target);
     try {
       startTransition(async () => {
         const {errorMessage} = await createAccountAction(formData)
@@ -61,8 +59,6 @@ export default function SignupPage() {
 
 
       })
-
-
 
       alert("Signup successful (mock)! You would typically be redirected.");
       setName('');
