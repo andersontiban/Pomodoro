@@ -1,57 +1,57 @@
 // app/login/page.js (or .tsx)
 "use client";
 
-import { useState } from 'react';
+import { useState, useTransition } from 'react'; // Added useTransition
+import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import Head from 'next/head';
-// import { FaEnvelope, FaLock } from 'react-icons/fa';
+import { loginAction } from '@/actions/users'; // Assuming you have this Server Action
 
 export default function LoginPage() {
   const router = useRouter();
-  const [isPending, startTransition] = useTransition()
+  const [isPending, startTransition] = useTransition(); // isPending can be used for UI state
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(false); // You can use isPending instead of loading if preferred
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
-    setLoading(true);
+    setLoading(true); // Or rely on isPending
 
-    // Basic email validation
     if (!/\S+@\S+\.\S+/.test(email)) {
         setError("Please enter a valid email address.");
         setLoading(false);
         return;
     }
 
-    console.log("Login attempt with:", { email, password });
-    const formData = new FormData(e.target);
-    try {
-      startTransition(async () => {
-        const {errorMessage} = await loginAction(formData)
+    // Create FormData directly from the event target (the form)
+    const formData = new FormData(e.target); 
 
-        if (errorMessage) {
-          console.log(errorMessage)
-        } else {
-          router.push('/')
-          console.log("successfully logged in! :)")
-        }
-
-
-      })
+    // Using startTransition for Server Action
+    startTransition(async () => {
+      try {
       
+        console.log("Login attempt with (FormData):", Object.fromEntries(formData));
+        console.log("Login attempt with (state):", { email, password });
+        const result = await loginAction(formData)
 
-      alert("Login successful (mock)! You would typically be redirected to the app.");
-      setEmail('');
-      setPassword('');
+        if (result.success) {
+          router.push('/song-app');
+        } else {
+          setError(result.error || "Login failed")
+        }
+        
 
-    } catch (apiError) {
-      console.error("Login API error:", apiError);
-      setError("An unexpected error occurred. Please try again.");
-    }
-    setLoading(false);
+      } catch (apiError) {
+        console.error("Login Action/API error:", apiError);
+        setError("An unexpected error occurred. Please try again.");
+      } finally {
+        setLoading(false); // Ensure loading is set to false
+      }
+    });
+
   };
 
   return (
@@ -76,8 +76,8 @@ export default function LoginPage() {
                 Email address
               </label>
               <input
-                id="email_login" // Unique ID for email on login page
-                name="email"
+                id="email_login"
+                name="email" // Make sure name attribute is present for FormData
                 type="email"
                 autoComplete="email"
                 required
@@ -100,8 +100,8 @@ export default function LoginPage() {
                 </div>
               </div>
               <input
-                id="password_login" // Unique ID for password on login page
-                name="password"
+                id="password_login"
+                name="password" // Make sure name attribute is present for FormData
                 type="password"
                 autoComplete="current-password"
                 required
@@ -119,10 +119,10 @@ export default function LoginPage() {
             <div>
               <button
                 type="submit"
-                disabled={loading}
+                disabled={loading || isPending} // Disable if loading OR isPending
                 className="w-full flex justify-center py-3 px-4 border border-transparent rounded-xl shadow-sm text-sm font-medium text-white bg-gradient-to-r from-indigo-600 to-pink-600 hover:from-indigo-500 hover:to-pink-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-slate-900 focus:ring-pink-500 transition-all duration-300 ease-in-out disabled:opacity-60 disabled:cursor-not-allowed"
               >
-                {loading ? (
+                {(loading || isPending) ? (
                   <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                     <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                     <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>

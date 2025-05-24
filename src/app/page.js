@@ -11,6 +11,7 @@ import { useState, useEffect } from 'react';
 const Navbar = ({ appUrl }) => {
   // "use client"; // Not needed here if Navbar is defined within a client component or this whole file is client
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const loginInUrl = "/login";
 
   return (
     <header className="bg-white shadow-md sticky top-0 z-50">
@@ -24,7 +25,7 @@ const Navbar = ({ appUrl }) => {
             <a href="#how-it-works" className="nav-link text-slate-600 hover:text-indigo-600 font-medium transition-colors">How It Works</a>
             <a href="#pricing" className="nav-link text-slate-600 hover:text-indigo-600 font-medium transition-colors">Pricing</a>
             <a href="#contact" className="nav-link text-slate-600 hover:text-indigo-600 font-medium transition-colors">Contact</a>
-            <Link href="/login">
+            <Link href= {loginInUrl}>
               <span className="bg-indigo-600 hover:bg-pink-500 text-white font-semibold py-2 px-5 rounded-full transition-colors duration-300 ease-in-out cursor-pointer">Login</span>
             </Link>
           </nav>
@@ -229,6 +230,7 @@ export default function LandingPage() {
   // Example: if your song translator app is at app/song-app/page.js, appUrl would be "/song-app"
   const appUrl = "/song-app"; 
   const signUpUrl = "/signup"; // Example: if you have a dedicated signup page at app/signup/page.js
+  const loginInUrl = "/login";
 
   return (
     <>
