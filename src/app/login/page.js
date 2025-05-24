@@ -1,57 +1,61 @@
 // app/login/page.js (or .tsx)
 "use client";
 
-import { useState, useTransition } from 'react'; // Added useTransition
+import { useState, useTransition } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import Head from 'next/head';
-import { loginAction } from '@/actions/users'; // Assuming you have this Server Action
+import { loginAction } from '@/actions/users'; // Make sure this path is correct
 
 export default function LoginPage() {
   const router = useRouter();
-  const [isPending, startTransition] = useTransition(); // isPending can be used for UI state
+  const [isPending, startTransition] = useTransition();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
-  const [loading, setLoading] = useState(false); // You can use isPending instead of loading if preferred
+  const [loading, setLoading] = useState(false); // You can use isPending instead of loading
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
-    setLoading(true); // Or rely on isPending
+    setLoading(true); 
 
     if (!/\S+@\S+\.\S+/.test(email)) {
         setError("Please enter a valid email address.");
         setLoading(false);
         return;
     }
+    if (!password) {
+        setError("Password is required.");
+        setLoading(false);
+        return;
+    }
 
-    // Create FormData directly from the event target (the form)
     const formData = new FormData(e.target); 
 
-    // Using startTransition for Server Action
     startTransition(async () => {
       try {
-      
-        console.log("Login attempt with (FormData):", Object.fromEntries(formData));
-        console.log("Login attempt with (state):", { email, password });
-        const result = await loginAction(formData)
+        const result = await loginAction(formData); 
 
-        if (result.success) {
-          router.push('/song-app');
+        if (result.success && result.user) { 
+          console.log("Login successful! User:", result.user.email);
+          // Clear form fields on successful login
+          setEmail('');
+          setPassword('');
+          router.push('/song-app'); // Redirect to the protected app page
+          router.refresh(); // VERY IMPORTANT: This re-fetches server data and re-runs middleware
+                            // ensuring the new session cookie is recognized.
         } else {
-          setError(result.error || "Login failed")
+          setError(result.error || "Login failed. Please check your credentials.");
+          console.error("Login Action Error:", result.error);
         }
-        
-
-      } catch (apiError) {
-        console.error("Login Action/API error:", apiError);
-        setError("An unexpected error occurred. Please try again.");
+      } catch (e) { 
+        console.error("Error calling loginAction:", e);
+        setError("An unexpected error occurred during login. Please try again.");
       } finally {
-        setLoading(false); // Ensure loading is set to false
+        setLoading(false); 
       }
     });
-
   };
 
   return (
@@ -76,8 +80,8 @@ export default function LoginPage() {
                 Email address
               </label>
               <input
-                id="email_login"
-                name="email" // Make sure name attribute is present for FormData
+                id="email_login" 
+                name="email" 
                 type="email"
                 autoComplete="email"
                 required
@@ -100,8 +104,8 @@ export default function LoginPage() {
                 </div>
               </div>
               <input
-                id="password_login"
-                name="password" // Make sure name attribute is present for FormData
+                id="password_login" 
+                name="password" 
                 type="password"
                 autoComplete="current-password"
                 required
@@ -119,7 +123,7 @@ export default function LoginPage() {
             <div>
               <button
                 type="submit"
-                disabled={loading || isPending} // Disable if loading OR isPending
+                disabled={loading || isPending} 
                 className="w-full flex justify-center py-3 px-4 border border-transparent rounded-xl shadow-sm text-sm font-medium text-white bg-gradient-to-r from-indigo-600 to-pink-600 hover:from-indigo-500 hover:to-pink-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-slate-900 focus:ring-pink-500 transition-all duration-300 ease-in-out disabled:opacity-60 disabled:cursor-not-allowed"
               >
                 {(loading || isPending) ? (

@@ -5,24 +5,22 @@ import { useState, useTransition } from 'react';
 import Link from 'next/link';
 import Head from 'next/head';
 import { useRouter } from 'next/navigation';
-import { createAccountAction } from '@/actions/users';
-// You might want to add icons later, e.g., for input fields or social logins
-// import { FaEnvelope, FaLock, FaUser } from 'react-icons/fa';
+import { createAccountAction } from '@/actions/users'; // Make sure this path is correct
 
 export default function SignupPage() {
   const router = useRouter();
-  const [name, setName] = useState('');
+  const [name, setName] = useState(''); // Keep if you plan to add a name field
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [error, setError] = useState('');
-  const [loading, setLoading] = useState(false);
-  const [isPending, startTransition] = useTransition()
+  const [loading, setLoading] = useState(false); // You can use isPending instead
+  const [isPending, startTransition] = useTransition();
 
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setError(''); // Clear previous errors
+    setError(''); 
     setLoading(true);
 
     if (password !== confirmPassword) {
@@ -30,47 +28,45 @@ export default function SignupPage() {
       setLoading(false);
       return;
     }
-    // Basic email validation
     if (!/\S+@\S+\.\S+/.test(email)) {
         setError("Please enter a valid email address.");
         setLoading(false);
         return;
     }
-    
-    // Basic password length
     if (password.length < 6) {
         setError("Password must be at least 6 characters long.");
         setLoading(false);
         return;
     }
 
-
-    console.log("Signup attempt with:", { name, email, password });
     const formData = new FormData(e.target);
-    try {
-      startTransition(async () => {
-        const {errorMessage} = await createAccountAction(formData)
+    // If you add a name field back to your form, ensure it has a 'name' attribute
+    // and append it if you're not getting it directly from formData:
+    // if (name) formData.append('name', name); 
 
-        if (errorMessage) {
-          //implement console or log
+    startTransition(async () => {
+      try {
+        const result = await createAccountAction(formData);
+
+        if (result.success) {
+          // Supabase signUp often requires email confirmation by default.
+          // You might want to show a message about that.
+          alert("Signup successful! Please check your email to confirm your account, then log in.");
+          setName('');
+          setEmail('');
+          setPassword('');
+          setConfirmPassword('');
+          router.push('/login'); // Redirect to login page after signup
         } else {
-          router.push('/')
+          setError(result.errorMessage || "Signup failed. Please try again.");
+          console.error("Signup Action Error:", result.errorMessage);
         }
-
-
-      })
-
-      alert("Signup successful (mock)! You would typically be redirected.");
-      setName('');
-      setEmail('');
-      setPassword('');
-      setConfirmPassword('');
-
-    } catch (apiError) {
-      console.error("Signup API error:", apiError);
-      setError("An unexpected error occurred. Please try again.");
-    }
-    setLoading(false);
+      } catch (apiError) {
+        console.error("Error calling createAccountAction:", apiError);
+        setError("An unexpected error occurred. Please try again.");
+      }
+      setLoading(false);
+    });
   };
 
   return (
@@ -96,7 +92,7 @@ export default function SignupPage() {
               </label>
               <input
                 id="email"
-                name="email"
+                name="email" // Name attribute for FormData
                 type="email"
                 autoComplete="email"
                 required
@@ -112,8 +108,8 @@ export default function SignupPage() {
                 Password
               </label>
               <input
-                id="password_signup" // Unique ID for password on signup page
-                name="password"
+                id="password_signup" 
+                name="password" // Name attribute for FormData
                 type="password"
                 autoComplete="new-password"
                 required
@@ -130,7 +126,7 @@ export default function SignupPage() {
               </label>
               <input
                 id="confirm-password"
-                name="confirm-password"
+                name="confirm_password" // Name attribute for FormData (though not directly used by Supabase signup)
                 type="password"
                 autoComplete="new-password"
                 required
@@ -148,10 +144,10 @@ export default function SignupPage() {
             <div>
               <button
                 type="submit"
-                disabled={loading}
+                disabled={loading || isPending}
                 className="w-full flex justify-center py-3 px-4 border border-transparent rounded-xl shadow-sm text-sm font-medium text-white bg-gradient-to-r from-indigo-600 to-pink-600 hover:from-indigo-500 hover:to-pink-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-slate-900 focus:ring-pink-500 transition-all duration-300 ease-in-out disabled:opacity-60 disabled:cursor-not-allowed"
               >
-                {loading ? (
+                {(loading || isPending) ? (
                   <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                     <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                     <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
@@ -171,7 +167,7 @@ export default function SignupPage() {
           </p>
         </div>
         <p className="mt-8 text-center text-xs text-slate-500">
-            &copy; {new Date().getFullYear()} Song Translator. All rights reserved.
+            © {new Date().getFullYear()} Song Translator. All rights reserved.
         </p>
       </div>
     </>

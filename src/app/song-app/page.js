@@ -6,6 +6,7 @@ import Head from 'next/head';
 import { FaArrowLeft } from 'react-icons/fa'; 
 import { createBrowserClient, createServerClient } from '@supabase/ssr';
 import { useRouter } from 'next/navigation';
+import LogoutButton from '../../../components/logoutbutton';
 
 export default function SongTranslatorApp() {
   const [session, setSession] = useState(null)
@@ -52,7 +53,7 @@ export default function SongTranslatorApp() {
       const ytPromise = fetch(YOUTUBE_API_ROUTE, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ query: `${song} ${artist} official music video` }) 
+        body: JSON.stringify({ query: `${song} ${artist}` }) 
       });
 
       const [lyricsRes, ytRes] = await Promise.all([lyricsPromise, ytPromise]);
@@ -137,6 +138,7 @@ export default function SongTranslatorApp() {
             <FaArrowLeft />
           </button>
           <h1 className="text-xl font-medium">{artist} – {song}</h1>
+          <LogoutButton />
         </header>
 
         {videoId && (
@@ -168,9 +170,7 @@ export default function SongTranslatorApp() {
             </div>
           </div>
         </div>
-        <footer className="p-4 text-center text-xs text-slate-500 shrink-0 bg-black/30"> 
-             Song Translator App © {new Date().getFullYear()}
-        </footer>
+
       </div>
     );
   }
@@ -180,6 +180,7 @@ export default function SongTranslatorApp() {
       <Head>
         <title>Translate a Song | Song Translator</title>
       </Head>
+      <LogoutButton />
       <div className="min-h-screen w-full bg-gradient-to-b from-black via-black to-indigo-500 flex items-center justify-center p-4 selection:bg-pink-500 selection:text-white">
         <div className="w-full max-w-md sm:max-w-lg bg-slate-900/70 backdrop-blur-lg rounded-2xl shadow-2xl p-6 sm:p-8 border border-indigo-700/50">
           <div className="flex items-center mb-6">
