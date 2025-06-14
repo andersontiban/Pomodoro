@@ -162,11 +162,11 @@ export default function SongTranslatorApp() {
           <div className="w-full max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="bg-white/10 rounded-xl p-6 shadow-inner">
               <h2 className="text-xl font-semibold mb-4 text-indigo-300 text-center">Original Lyrics</h2>
-              <pre className="text-lg leading-relaxed whitespace-pre-wrap text-white">{lyrics || "No original lyrics loaded."}</pre>
+              <pre className="text-lg leading-relaxed whitespace-pre-wrap text-white text-center">{lyrics || "No original lyrics loaded."}</pre>
             </div>
             <div className="bg-white/10 rounded-xl p-6 shadow-inner">
               <h2 className="text-xl font-semibold mb-4 text-pink-400 capitalize text-center">Translated ({language})</h2>
-              <pre className="text-lg leading-relaxed whitespace-pre-wrap text-white">{translatedLyrics || "No translation loaded."}</pre>
+              <pre className="text-lg leading-relaxed whitespace-pre-wrap text-white text-center">{translatedLyrics || "No translation loaded."}</pre>
             </div>
           </div>
         </div>

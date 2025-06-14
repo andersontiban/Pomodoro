@@ -11,7 +11,7 @@ export async function POST(req) {
   try {
     const { lyrics, targetLanguage } = await req.json()
 
-    const message = `Translate the following lyrics to ${targetLanguage}, and return the result in a stacked format: for each line, show the original line first, followed by the translated line. Keep line breaks between each pair:\n\n${lyrics}`;
+    const message = `Translate the following lyrics to english, dont return anything else: \n\n${lyrics}`
 
     const response = await client.chat.completions.create({
       messages: [
@@ -25,7 +25,6 @@ export async function POST(req) {
     })
 
     const translatedLyrics = response.choices?.[0]?.message?.content || "No translation found."
-    console.log(translatedLyrics)
     return Response.json({ translatedLyrics })
   } catch (error) {
     console.error("Translation error:", error)
