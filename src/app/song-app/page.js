@@ -6,7 +6,7 @@ import Head from 'next/head';
 import { FaArrowLeft } from 'react-icons/fa'; 
 import { createBrowserClient, createServerClient } from '@supabase/ssr';
 import { useRouter } from 'next/navigation';
-import LogoutButton from '../../../components/LogoutButton';
+import LogoutButton from "../../components/LogoutButton";
 
 export default function SongTranslatorApp() {
   const [session, setSession] = useState(null)
