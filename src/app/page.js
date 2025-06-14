@@ -74,37 +74,6 @@ const Navbar = ({ appUrl, user }) => { // Pass user to Navbar if it needs to cha
   );
 };
 
-// Footer Component (Client Component)
-const Footer = () => {
-  const [currentYear, setCurrentYear] = useState('');
-
-  useEffect(() => {
-    setCurrentYear(new Date().getFullYear().toString());
-  }, []);
-
-  return (
-    <footer className="footer bg-slate-800 text-slate-400 py-12 sm:py-16" id="contact"> 
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8 text-center">
-        <div className="mb-6">
-          <Link href="/">
-            <span className="text-xl font-bold text-indigo-400 cursor-pointer">Song<span className="text-pink-400">Translator</span></span>
-          </Link>
-        </div>
-        <ul className="flex justify-center space-x-4 sm:space-x-6 mb-6">
-          <li><a href="#" className="hover:text-indigo-300 transition-colors">About Us</a></li>
-          <li><a href="#" className="hover:text-indigo-300 transition-colors">Contact</a></li>
-          <li><a href="#" className="hover:text-indigo-300 transition-colors">Privacy Policy</a></li>
-          <li><a href="#" className="hover:text-indigo-300 transition-colors">Terms of Service</a></li>
-        </ul>
-        <p className="text-sm">
-          &copy; {currentYear} Song Translator. All rights reserved.
-        </p>
-        <p className="text-xs mt-1"><em>Note: This is a fictional service for demonstration.</em></p>
-      </div>
-    </footer>
-  );
-};
-
 const HeroSection = ({ signUpUrl }) => ( // Changed appUrl to signUpUrl for clarity
   <section className="hero bg-gradient-to-b from-black via-black to-indigo-500 text-white pt-24 pb-16 sm:pt-32 sm:pb-20 text-center overflow-hidden">
     <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
@@ -112,8 +81,7 @@ const HeroSection = ({ signUpUrl }) => ( // Changed appUrl to signUpUrl for clar
         Unlock the Music. <span className="block sm:inline">Instantly Translate Songs.</span>
       </h1>
       <p className="text-lg sm:text-xl text-indigo-200 mb-10 max-w-2xl mx-auto"> 
-        Dive deeper into the world of music. Understand lyrics in your chosen language, watch official videos,
-        and connect with artists like never before.
+        Dive deeper into the world of music. Understand lyrics in your chosen language,and watch official videos.
       </p>
       <Link href={signUpUrl}>
         <span className="bg-pink-500 hover:bg-pink-600 text-white font-semibold py-3 px-8 rounded-full text-lg shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300 ease-in-out cursor-pointer">
@@ -121,8 +89,8 @@ const HeroSection = ({ signUpUrl }) => ( // Changed appUrl to signUpUrl for clar
         </span>
       </Link>
       <div className="mt-12 sm:mt-16 max-w-3xl mx-auto">
-        <div className="bg-white p-2 sm:p-3 rounded-xl shadow-2xl">
-          <img src="https://placehold.co/800x450/E2E8F0/4A5568?text=App+Screenshot+Here" alt="Song Translator App Preview" className="rounded-lg w-full h-auto" />
+        <div className="bg-white p-2 sm:p-0.5 rounded-xl shadow-2xl">
+          <img src="/images/display.png" alt="Song Translator App Preview" className="rounded-lg w-full h-auto" />
         </div>
       </div>
     </div>
