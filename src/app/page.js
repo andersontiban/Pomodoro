@@ -4,7 +4,6 @@ import Head from 'next/head';
 import Link from 'next/link';
 import Image from 'next/image'; 
 import { useState, useEffect } from 'react'; 
-import  SubscribeButton  from '../../components/subscribebutton'; // Assuming this path is correct
 import { createBrowserClient } from '@supabase/ssr'; // For client-side Supabase
 
 // Navbar Component (Client Component)
@@ -21,10 +20,7 @@ const Navbar = ({ appUrl, user }) => { // Pass user to Navbar if it needs to cha
             <span className="text-2xl font-bold text-indigo-600 cursor-pointer">Song<span className="text-pink-500">Translator</span></span>
           </Link>
           <nav className="hidden md:flex space-x-6 items-center">
-            <a href="#features" className="nav-link text-slate-600 hover:text-indigo-600 font-medium transition-colors">Features</a>
             <a href="#how-it-works" className="nav-link text-slate-600 hover:text-indigo-600 font-medium transition-colors">How It Works</a>
-            <a href="#pricing" className="nav-link text-slate-600 hover:text-indigo-600 font-medium transition-colors">Pricing</a>
-            <a href="#contact" className="nav-link text-slate-600 hover:text-indigo-600 font-medium transition-colors">Contact</a>
             {user ? (
               <Link href="/song-app"> {/* Or a dashboard link */}
                 <span className="bg-pink-500 hover:bg-pink-600 text-white font-semibold py-2 px-5 rounded-full transition-colors duration-300 ease-in-out cursor-pointer">Go to App</span>
@@ -133,39 +129,6 @@ const HeroSection = ({ signUpUrl }) => ( // Changed appUrl to signUpUrl for clar
   </section>
 );
 
-const FeaturesSection = () => (
-  <section id="features" className="py-16 sm:py-24 bg-slate-50">
-    <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-      <div className="text-center mb-12 sm:mb-16">
-        <h2 className="text-3xl sm:text-4xl font-extrabold text-slate-800 mb-3">Why You'll Love Song Translator</h2>
-        <p className="text-lg text-slate-600 max-w-xl mx-auto">Discover a new way to experience music from around the globe.</p>
-      </div>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-        <div className="bg-white p-6 rounded-xl shadow-lg hover:shadow-2xl transition-shadow duration-300 text-center">
-          <div className="text-4xl text-indigo-500 mb-4">🎤</div>
-          <h3 className="text-xl font-semibold text-slate-800 mb-2">Instant Lyric Translation</h3>
-          <p className="text-slate-600 text-sm">Translate song lyrics into multiple languages with just a few clicks. Understand the meaning behind the melodies.</p>
-        </div>
-        <div className="bg-white p-6 rounded-xl shadow-lg hover:shadow-2xl transition-shadow duration-300 text-center">
-          <div className="text-4xl text-indigo-500 mb-4">▶️</div>
-          <h3 className="text-xl font-semibold text-slate-800 mb-2">YouTube Video Integration</h3>
-          <p className="text-slate-600 text-sm">Watch the official music video directly alongside the original and translated lyrics for a complete experience.</p>
-        </div>
-        <div className="bg-white p-6 rounded-xl shadow-lg hover:shadow-2xl transition-shadow duration-300 text-center">
-          <div className="text-4xl text-indigo-500 mb-4">🌍</div>
-          <h3 className="text-xl font-semibold text-slate-800 mb-2">Vast Music Library</h3>
-          <p className="text-slate-600 text-sm">Access lyrics for millions of songs across various genres and artists, powered by a comprehensive database.</p>
-        </div>
-        <div className="bg-white p-6 rounded-xl shadow-lg hover:shadow-2xl transition-shadow duration-300 text-center">
-          <div className="text-4xl text-indigo-500 mb-4">💡</div>
-          <h3 className="text-xl font-semibold text-slate-800 mb-2">Simple & Intuitive</h3>
-          <p className="text-slate-600 text-sm">No complicated setups. Just enter the artist and song name, pick your language, and enjoy!</p>
-        </div>
-      </div>
-    </div>
-  </section>
-);
-
 const HowItWorksSection = () => (
   <section id="how-it-works" className="py-16 sm:py-24 bg-white">
     <div className="container mx-auto px-4 sm:px-6 lg:px-8">
@@ -194,75 +157,6 @@ const HowItWorksSection = () => (
   </section>
 );
 
-const PricingSection = ({ appUrl, signUpUrl, user }) => { // Added user prop
-  const loginUrl = "/login"; // Define login URL
-
-  return (
-    <section id="pricing" className="py-16 sm:py-24 bg-slate-50">
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center mb-12 sm:mb-16">
-          <h2 className="text-3xl sm:text-4xl font-extrabold text-slate-800 mb-3">Find the Perfect Plan</h2>
-          <p className="text-lg text-slate-600 max-w-xl mx-auto">Choose a plan that suits your music exploration needs.</p>
-        </div>
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-stretch">
-          {/* Free Tier */}
-          <div className="bg-white p-8 rounded-xl shadow-lg flex flex-col transition-transform duration-300 hover:scale-105">
-            <h3 className="text-2xl font-semibold text-indigo-600 mb-2">Free Tier</h3>
-            <p className="text-4xl font-bold text-slate-800 mb-1">$0<span className="text-lg font-normal text-slate-500">/month</span></p>
-            <p className="text-slate-600 text-sm mb-6 min-h-[40px]">Get a taste of music translation.</p>
-            <ul className="space-y-3 text-slate-600 text-sm mb-8 flex-grow">
-              <li className="flex items-center"><svg className="w-5 h-5 text-green-500 mr-2" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd"></path></svg>Translate up to 3 songs/day</li>
-              <li className="flex items-center"><svg className="w-5 h-5 text-green-500 mr-2" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd"></path></svg>Access to 5 common languages</li>
-              <li className="flex items-center"><svg className="w-5 h-5 text-green-500 mr-2" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd"></path></svg>YouTube video integration</li>
-            </ul>
-            <Link href={user ? appUrl : signUpUrl}>
-              <span className="w-full bg-indigo-500 hover:bg-indigo-600 text-white font-semibold py-3 px-6 rounded-lg transition-colors text-center cursor-pointer block">
-                {user ? 'Go to App' : 'Start for Free'}
-              </span>
-            </Link>
-          </div>
-
-          {/* Pro Monthly Tier */}
-          <div className="bg-white p-8 rounded-xl shadow-2xl flex flex-col ring-2 ring-pink-500 relative transition-transform duration-300 hover:scale-105">
-            <div className="absolute top-0 -translate-y-1/2 left-1/2 -translate-x-1/2 bg-pink-500 text-white text-xs font-semibold px-3 py-1 rounded-full uppercase">Most Popular</div>
-            <h3 className="text-2xl font-semibold text-pink-500 mb-2">Pro Monthly</h3>
-            <p className="text-4xl font-bold text-slate-800 mb-1">$5.99<span className="text-lg font-normal text-slate-500">/month</span></p>
-            <p className="text-slate-600 text-sm mb-6 min-h-[40px]">Unlock the full power of Song Translator.</p>
-            <ul className="space-y-3 text-slate-600 text-sm mb-8 flex-grow">
-              <li className="flex items-center"><svg className="w-5 h-5 text-green-500 mr-2" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd"></path></svg>Unlimited song translations</li>
-              {/* ... other features ... */}
-            </ul>
-            {user ? (
-              <SubscribeButton userId={user.id} plan="pro_monthly" />
-            ) : (
-              <Link href={loginUrl}>
-                  <span className="w-full bg-pink-500 hover:bg-pink-600 text-white font-semibold py-3 px-6 rounded-lg transition-colors text-center cursor-pointer block">Login to Subscribe</span>
-              </Link>
-            )}
-          </div>
-
-          {/* Pro Annually Tier */}
-          <div className="bg-white p-8 rounded-xl shadow-lg flex flex-col transition-transform duration-300 hover:scale-105">
-            <h3 className="text-2xl font-semibold text-indigo-600 mb-2">Pro Annually</h3>
-            <p className="text-4xl font-bold text-slate-800 mb-1">$49.99<span className="text-lg font-normal text-slate-500">/year</span></p>
-            <p className="text-slate-600 text-sm mb-6 min-h-[40px]">Best value for dedicated music lovers.</p>
-            <ul className="space-y-3 text-slate-600 text-sm mb-8 flex-grow">
-              <li className="flex items-center"><svg className="w-5 h-5 text-green-500 mr-2" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd"></path></svg>All Pro features</li>
-              {/* ... other features ... */}
-            </ul>
-            {user ? (
-              <SubscribeButton userId={user.id} plan="pro_annually" />
-            ) : (
-              <Link href={loginUrl}>
-                  <span className="w-full bg-indigo-500 hover:bg-indigo-600 text-white font-semibold py-3 px-6 rounded-lg transition-colors text-center cursor-pointer block">Login to Subscribe</span>
-              </Link>
-            )}
-          </div>
-        </div>
-      </div>
-    </section>
-  );
-};
 
 const CallToActionSection = ({ signUpUrl }) => ( 
   <section id="cta" className="py-16 sm:py-24 bg-indigo-600 text-white">
@@ -329,12 +223,9 @@ export default function LandingPage() {
       <Navbar appUrl={appUrl} user={currentUser} /> 
       <main>
         <HeroSection signUpUrl={signUpUrl} /> 
-        <FeaturesSection />
         <HowItWorksSection />
-        <PricingSection appUrl={appUrl} signUpUrl={signUpUrl} user={currentUser} /> 
         <CallToActionSection signUpUrl={signUpUrl} />
       </main>
-      <Footer />
     </>
   );
 }
