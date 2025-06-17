@@ -3,7 +3,6 @@
 
 import { useRouter } from 'next/navigation';
 import { createBrowserClient } from '@supabase/ssr';
-import { FaSignOutAlt } from 'react-icons/fa';
 
 export default function LogoutButton({ className }) {
   const router = useRouter();
@@ -34,7 +33,6 @@ export default function LogoutButton({ className }) {
       className={className || defaultClasses} // If className is provided, it overrides the default
       aria-label="Logout"
     >
-    
       Logout
     </button>
   );
