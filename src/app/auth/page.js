@@ -2,26 +2,25 @@
 
 import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { createClient } from '../../../utils/supabase/client'; // adjust path if needed
+import { supabase } from '../../../utils/supabase/client';
 
 export default function AuthCallbackPage() {
   const router = useRouter();
-  const supabase = createClient();
 
   useEffect(() => {
-    const confirmUser = async () => {
-      const { error } = await supabase.auth.getSessionFromUrl();
+    async function confirmUser() {
+      const { error, data } = await supabase.auth.getSessionFromUrl();
 
       if (error) {
-        console.error('Error confirming sign-up:', error.message);
-        router.push('/login');
-      } else {
-        router.push('/login'); 
+        console.error('Error confirming email:', error.message);
       }
-    };
+
+      // Redirect either way
+      router.push('/login');
+    }
 
     confirmUser();
-  }, []);
+  }, [router]);
 
-  return null; // nothing is rendered
+  return null;
 }
