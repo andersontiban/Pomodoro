@@ -25,15 +25,16 @@ export default function LogoutButton({ className }) {
   };
 
   // Added ml-auto and cursor-pointer to the default class string
-  const defaultClasses = "ml-auto flex items-center text-sm sm:text-base bg-pink-600 hover:bg-pink-700 text-white font-semibold py-2 px-3 sm:px-4 rounded-lg transition-colors duration-200 cursor-pointer";
+  // Changed rounded-xl to rounded-full for a more oval/circular shape
+  const defaultClasses = "ml-auto flex items-center text-sm sm:text-base bg-pink-600 hover:bg-pink-700 text-white font-semibold py-2 px-3 sm:px-4 rounded-full transition-colors duration-200 cursor-pointer";
 
   return (
-    <button 
+    <button
       onClick={handleLogout}
       className={className || defaultClasses} // If className is provided, it overrides the default
       aria-label="Logout"
     >
-      <FaSignOutAlt className="mr-1 sm:mr-2 h-4 w-4 sm:h-5 sm:w-5" /> 
+    
       Logout
     </button>
   );
