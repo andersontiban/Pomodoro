@@ -166,9 +166,6 @@ export default function SignupPage() {
             </Link>
           </p>
         </div>
-        <p className="mt-8 text-center text-xs text-slate-500">
-            © {new Date().getFullYear()} Song Translator. All rights reserved.
-        </p>
       </div>
     </>
   );
