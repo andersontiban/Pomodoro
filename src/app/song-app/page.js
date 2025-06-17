@@ -47,7 +47,7 @@ export default function SongTranslatorApp() {
   const [lyrics, setLyrics] = useState('');
   const [translatedLyrics, setTranslatedLyrics] = useState('');
   const [loading, setLoading] = useState(false);
-  const [language, setLanguage] = useState('es');
+  const [language, setLanguage] = useState('en');
   const [error, setError] = useState('');
 
   const LYRICS_API_URL = 'https://api.lyrics.ovh/v1/';
