@@ -17,7 +17,7 @@ const Navbar = ({ appUrl, user }) => { // Pass user to Navbar if it needs to cha
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           <Link href="/">
-            <span className="text-2xl font-bold text-indigo-600 cursor-pointer">Song<span className="text-pink-500">Translator</span></span>
+            <span className="text-2xl font-bold text-indigo-600 cursor-pointer">Lyric<span className="text-pink-500">Switch</span></span>
           </Link>
           <nav className="hidden md:flex space-x-6 items-center">
             <a href="#how-it-works" className="nav-link text-slate-600 hover:text-indigo-600 font-medium transition-colors">How It Works</a>

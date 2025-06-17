@@ -97,11 +97,6 @@ export default function LoginPage() {
                 <label htmlFor="password_login" className="block text-sm font-medium text-indigo-300 mb-1">
                   Password
                 </label>
-                <div className="text-sm">
-                  <a href="#" className="font-medium text-indigo-400 hover:text-pink-400 transition-colors">
-                    Forgot your password?
-                  </a>
-                </div>
               </div>
               <input
                 id="password_login" 
@@ -138,16 +133,13 @@ export default function LoginPage() {
 
           <p className="mt-8 text-center text-sm text-slate-400">
             Don&apos;t have an account?{' '}
-            <Link href="/signup">
+            <Link href="/sign-up">
               <span className="font-medium text-indigo-400 hover:text-pink-400 cursor-pointer transition-colors">
                 Sign up
               </span>
             </Link>
           </p>
         </div>
-         <p className="mt-8 text-center text-xs text-slate-500">
-            &copy; {new Date().getFullYear()} Song Translator. All rights reserved.
-        </p>
       </div>
     </>
   );
