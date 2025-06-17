@@ -81,7 +81,7 @@ const HeroSection = ({ signUpUrl }) => ( // Changed appUrl to signUpUrl for clar
         Unlock the Music. <span className="block sm:inline">Instantly Translate Songs.</span>
       </h1>
       <p className="text-lg sm:text-xl text-indigo-200 mb-10 max-w-2xl mx-auto"> 
-        Dive deeper into the world of music. Understand lyrics in your chosen language,and watch official videos.
+        Dive deeper into the world of music. Understand lyrics in your chosen language!
       </p>
       <Link href={signUpUrl}>
         <span className="bg-pink-500 hover:bg-pink-600 text-white font-semibold py-3 px-8 rounded-full text-lg shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300 ease-in-out cursor-pointer">
@@ -113,12 +113,12 @@ const HowItWorksSection = () => (
         <div className="text-center flex-1 max-w-xs mx-auto">
           <div className="bg-pink-500 text-white w-16 h-16 rounded-full flex items-center justify-center text-2xl font-bold mx-auto mb-6 shadow-md">2</div>
           <h3 className="text-xl font-semibold text-slate-800 mb-2">Choose Your Language</h3>
-          <p className="text-slate-600 text-sm">Select your desired language for translation from our extensive list.</p>
+          <p className="text-slate-600 text-sm">Select your desired language for translation from our list.</p>
         </div>
         <div className="text-center flex-1 max-w-xs mx-auto">
           <div className="bg-pink-500 text-white w-16 h-16 rounded-full flex items-center justify-center text-2xl font-bold mx-auto mb-6 shadow-md">3</div>
           <h3 className="text-xl font-semibold text-slate-800 mb-2">Enjoy & Explore</h3>
-          <p className="text-slate-600 text-sm">Receive instant lyrics, translation, and the official music video. Dive in!</p>
+          <p className="text-slate-600 text-sm">Receive lyrics, translation, and the music video. Dive in!</p>
         </div>
       </div>
     </div>
