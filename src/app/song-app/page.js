@@ -178,13 +178,13 @@ export default function SongTranslatorApp() {
   return (
     <>
       <Head>
-        <title>Translate a Song | Song Translator</title>
+        <title>Translate a Song | LyricSwitch</title>
       </Head>
       <LogoutButton />
       <div className="min-h-screen w-full bg-gradient-to-b from-black via-black to-indigo-500 flex items-center justify-center p-4 selection:bg-pink-500 selection:text-white">
         <div className="w-full max-w-md sm:max-w-lg bg-slate-900/70 backdrop-blur-lg rounded-2xl shadow-2xl p-6 sm:p-8 border border-indigo-700/50">
           <div className="flex items-center mb-6">
-            <h1 className="text-2xl sm:text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-pink-500">Song Translator</h1>
+            <h1 className="text-2xl sm:text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-pink-500">LyricSwitch</h1>
           </div>
           <form onSubmit={handleSearch} className="space-y-4 sm:space-y-5">
             <input
