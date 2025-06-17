@@ -7,12 +7,18 @@ export async function createAccountAction(formData) {
 
         const supabase = await createClient()
 
-         const data = {
-        email: formData.get('email'),
-        password: formData.get('password'),
-        }
+        const email = formData.get('email');
+        const password = formData.get('password');
 
-        const { error } = await supabase.auth.signUp(data)
+        // const { error } = await supabase.auth.signUp(data)
+
+        const { data, error } = supabase.auth.signUp({
+            email,
+            password,
+            options: {
+              emailRedirectTo: 'https://music-translator.vercel.app/auth/',
+            },
+          })
 
         if (error) {
             return { errorMessage: error.message };
