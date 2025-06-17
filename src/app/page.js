@@ -53,7 +53,6 @@ const Navbar = ({ appUrl, user }) => { // Pass user to Navbar if it needs to cha
       </div>
       {/* Mobile Menu */}
       <div id="mobile-menu" className={`md:hidden ${mobileMenuOpen ? 'block' : 'hidden'} bg-white shadow-lg`}>
-        <a href="#features" className="block py-2 px-4 text-sm text-slate-600 hover:bg-indigo-50 hover:text-indigo-600" onClick={() => setMobileMenuOpen(false)}>Features</a>
         {/* ... other mobile links ... */}
         {user ? (
             <Link href="/song-app">
