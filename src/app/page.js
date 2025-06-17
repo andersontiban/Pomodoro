@@ -90,7 +90,7 @@ const HeroSection = ({ signUpUrl }) => ( // Changed appUrl to signUpUrl for clar
       </Link>
       <div className="mt-12 sm:mt-16 max-w-3xl mx-auto">
         <div className="bg-white p-2 sm:p-0.5 rounded-xl shadow-2xl">
-          <img src="/images/display.png" alt="Song Translator App Preview" className="rounded-lg w-full h-auto" />
+          <img src="/images/display.png" alt="LyricSwitch App Preview" className="rounded-lg w-full h-auto" />
         </div>
       </div>
     </div>
@@ -135,7 +135,7 @@ const CallToActionSection = ({ signUpUrl }) => (
       </p>
       <Link href={signUpUrl}>
         <span className="bg-pink-500 hover:bg-pink-600 text-white font-semibold py-3 px-10 rounded-full text-lg shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300 ease-in-out cursor-pointer">
-          Try Song Translator Now
+          Try LyricSwitch Now
         </span>
       </Link>
     </div>
@@ -183,7 +183,7 @@ export default function LandingPage() {
   return (
     <>
       <Head>
-        <title>Song Translator - Understand Music in Any Language</title>
+        <title>LyricSwitch - Understand Music in Any Language</title>
         <meta name="description" content="Instantly translate your favorite songs, understand lyrics in any language, and watch official music videos with Song Translator." />
         <link rel="icon" href="/favicon.ico" /> 
       </Head>
