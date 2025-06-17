@@ -16,7 +16,7 @@ export async function createAccountAction(formData) {
             email,
             password,
             options: {
-              emailRedirectTo: 'https://music-translator.vercel.app/auth/',
+              emailRedirectTo: 'https://music-translator.vercel.app/login/',
             },
           })
 
