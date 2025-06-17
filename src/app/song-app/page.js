@@ -253,8 +253,8 @@ export default function SongTranslatorApp() {
                 onChange={e => setLanguage(e.target.value)}
                 className="w-full px-4 py-3 border-2 border-slate-700 bg-slate-800 text-slate-100 rounded-xl focus:outline-none focus:border-pink-500 focus:ring-1 focus:ring-pink-500 transition"
               >
-                <option value="en">English</option>
                 <option value="es">Spanish</option>
+                <option value="en">English</option>
                 <option value="pt">Portuguese</option>
                 <option value="ja">Japanese</option>
               </select>
