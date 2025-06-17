@@ -1,31 +1,30 @@
 // app/song-app/page.js
-"use client"; 
+"use client";
 
 import { useState, useEffect } from 'react';
-import Head from 'next/head'; 
-import { FaArrowLeft } from 'react-icons/fa'; 
-import { createBrowserClient, createServerClient } from '@supabase/ssr';
+import Head from 'next/head';
+import { FaArrowLeft } from 'react-icons/fa';
+import { createBrowserClient } from '@supabase/ssr';
 import { useRouter } from 'next/navigation';
 import LogoutButton from "../../components/LogoutButton";
 
 export default function SongTranslatorApp() {
-  const [session, setSession] = useState(null)
+  const [session, setSession] = useState(null);
   const router = useRouter();
 
   useEffect(() => {
     const fetchSession = async () => {
       const supabase = createBrowserClient(process.env.NEXT_PUBLIC_SUPABASE_URL, process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY);
-      const {data: {session}} = await supabase.auth.getSession();
+      const { data: { session } } = await supabase.auth.getSession();
 
       if (!session) {
-        router.push("/login")
+        router.push("/login");
       } else {
-        setSession(session)
+        setSession(session);
       }
     };
     fetchSession();
   }, []);
-  
 
   const [resultsReady, setResultsReady] = useState(false);
   const [videoId, setVideoId] = useState(null);
@@ -34,11 +33,14 @@ export default function SongTranslatorApp() {
   const [lyrics, setLyrics] = useState('');
   const [translatedLyrics, setTranslatedLyrics] = useState('');
   const [loading, setLoading] = useState(false);
-  const [language, setLanguage] = useState('es'); 
+  const [language, setLanguage] = useState('es');
+  const [error, setError] = useState('');
 
-  const LYRICS_API_URL = 'https://api.lyrics.ovh/v1/'; 
-  const YOUTUBE_API_ROUTE = '/api/youtube'; 
-  const TRANSLATE_API_ROUTE = '/api/translate'; 
+  const LYRICS_API_URL = 'https://api.lyrics.ovh/v1/';
+  const YOUTUBE_API_ROUTE = '/api/youtube';
+  const TRANSLATE_API_ROUTE = '/api/translate';
+
+  const FETCH_TIMEOUT_MS = 5000;
 
   const handleSearch = async (e) => {
     e.preventDefault();
@@ -47,16 +49,25 @@ export default function SongTranslatorApp() {
     setVideoId(null);
     setResultsReady(false);
     setLoading(true);
+    setError('');
+
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => {
+      controller.abort();
+    }, FETCH_TIMEOUT_MS);
 
     try {
-      const lyricsPromise = fetch(`${LYRICS_API_URL}${encodeURIComponent(artist)}/${encodeURIComponent(song)}`);
+      const lyricsPromise = fetch(`${LYRICS_API_URL}${encodeURIComponent(artist)}/${encodeURIComponent(song)}`, { signal: controller.signal });
       const ytPromise = fetch(YOUTUBE_API_ROUTE, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ query: `${song} ${artist}` }) 
+        body: JSON.stringify({ query: `${song} ${artist}` }),
+        signal: controller.signal
       });
 
       const [lyricsRes, ytRes] = await Promise.all([lyricsPromise, ytPromise]);
+
+      clearTimeout(timeoutId);
 
       const lyricsData = await lyricsRes.json();
       const ytData = await ytRes.json();
@@ -64,10 +75,13 @@ export default function SongTranslatorApp() {
       if (lyricsData.lyrics) {
         const cleanedLyrics = lyricsData.lyrics.replace(/\r\n/g, '\n').replace(/\r/g, '\n');
         setLyrics(cleanedLyrics);
-        await translateLyrics(cleanedLyrics, language); 
+        await translateLyrics(cleanedLyrics, language);
       } else {
         setLyrics('No lyrics found for this song.');
         setTranslatedLyrics('No translation found as no lyrics were found.');
+        setResultsReady(true);
+        setLoading(false);
+        return;
       }
 
       if (ytData.videoId) {
@@ -78,24 +92,34 @@ export default function SongTranslatorApp() {
 
       setResultsReady(true);
     } catch (error) {
+      clearTimeout(timeoutId);
       console.error("Error during search:", error);
-      setLyrics('An error occurred while fetching lyrics.');
-      setTranslatedLyrics('An error occurred while translating lyrics.');
-      setResultsReady(true); 
+
+      if (error.name === 'AbortError') {
+        setError('Lyrics unavailable please try a different song/artist.');
+      } else {
+        setError('An error occurred during the search. Please try again.');
+      }
+
+      setLyrics('');
+      setTranslatedLyrics('');
+      setVideoId(null);
+      setResultsReady(false);
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
   };
 
-  const translateLyrics = async (lyricsToTranslate, targetLanguage) => { 
+  const translateLyrics = async (lyricsToTranslate, targetLanguage) => {
     if (!lyricsToTranslate.trim()) {
-        setTranslatedLyrics('No lyrics to translate.');
-        return;
+      setTranslatedLyrics('No lyrics to translate.');
+      return;
     }
     try {
       const res = await fetch(TRANSLATE_API_ROUTE, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ lyrics: lyricsToTranslate, language: targetLanguage }) 
+        body: JSON.stringify({ lyrics: lyricsToTranslate, language: targetLanguage })
       });
       const data = await res.json();
       if (res.ok) {
@@ -117,6 +141,7 @@ export default function SongTranslatorApp() {
     setLyrics('');
     setTranslatedLyrics('');
     setVideoId(null);
+    setError('');
   };
 
   if (loading && !resultsReady) {
@@ -131,13 +156,11 @@ export default function SongTranslatorApp() {
 
   if (resultsReady) {
     return (
-      // Changed to default export
-      <div className="h-screen w-screen bg-gradient-to-b from-black via-black to-indigo-500 text-white flex flex-col"> 
-        <header className="p-4 flex items-center">
-          <button onClick={resetSearchAndInputs} className="text-2xl mr-4 hover:text-indigo-300">
+      <div className="h-screen w-screen bg-gradient-to-b from-black via-black to-indigo-500 text-white flex flex-col">
+        <header className="p-4 flex items-center justify-between"> {/* Added justify-between to space items */}
+          <button onClick={resetSearchAndInputs} className="text-2xl hover:text-indigo-300"> {/* Removed mr-4 */}
             <FaArrowLeft />
           </button>
-          <h1 className="text-xl font-medium">{artist} – {song}</h1>
           <LogoutButton />
         </header>
 
@@ -180,7 +203,10 @@ export default function SongTranslatorApp() {
       <Head>
         <title>Translate a Song | LyricSwitch</title>
       </Head>
-      <LogoutButton />
+      {/* Position LogoutButton absolutely at the top right with padding */}
+      <div className="absolute top-0 right-0 p-4 z-10"> {/* Added z-10 to ensure it's on top */}
+        <LogoutButton />
+      </div>
       <div className="min-h-screen w-full bg-gradient-to-b from-black via-black to-indigo-500 flex items-center justify-center p-4 selection:bg-pink-500 selection:text-white">
         <div className="w-full max-w-md sm:max-w-lg bg-slate-900/70 backdrop-blur-lg rounded-2xl shadow-2xl p-6 sm:p-8 border border-indigo-700/50">
           <div className="flex items-center mb-6">
@@ -211,17 +237,15 @@ export default function SongTranslatorApp() {
                 onChange={e => setLanguage(e.target.value)}
                 className="w-full px-4 py-3 border-2 border-slate-700 bg-slate-800 text-slate-100 rounded-xl focus:outline-none focus:border-pink-500 focus:ring-1 focus:ring-pink-500 transition"
               >
+                <option value="en">English</option>
                 <option value="es">Spanish</option>
-                <option value="fr">French</option>
-                <option value="de">German</option>
-                <option value="ja">Japanese</option>
-                <option value="ko">Korean</option>
                 <option value="pt">Portuguese</option>
-                <option value="it">Italian</option>
-                <option value="ru">Russian</option>
-                <option value="zh">Chinese (Simplified)</option>
+                <option value="ja">Japanese</option>
               </select>
             </div>
+            {error && (
+              <p className="text-red-400 text-sm text-center">{error}</p>
+            )}
             <button
               type="submit"
               className="w-full py-3 bg-gradient-to-r from-indigo-600 to-pink-600 text-white font-semibold rounded-xl hover:from-indigo-500 hover:to-pink-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-slate-900 focus:ring-pink-500 transition-all duration-300 ease-in-out disabled:opacity-60 disabled:cursor-not-allowed"
@@ -238,15 +262,15 @@ export default function SongTranslatorApp() {
           height: 8px;
         }
         .custom-scrollbar::-webkit-scrollbar-track {
-          background: rgba(51, 65, 85, 0.2); 
+          background: rgba(51, 65, 85, 0.2);
           border-radius: 10px;
         }
         .custom-scrollbar::-webkit-scrollbar-thumb {
-          background: #6366f1; 
+          background: #6366f1;
           border-radius: 10px;
         }
         .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-          background: #ec4899; 
+          background: #ec4899;
         }
         .custom-scrollbar {
           scrollbar-width: thin;
