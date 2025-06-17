@@ -10,21 +10,35 @@ import LogoutButton from "../../components/LogoutButton";
 
 export default function SongTranslatorApp() {
   const [session, setSession] = useState(null);
+  const [isMobile, setIsMobile] = useState(false);
   const router = useRouter();
 
   useEffect(() => {
+    const checkScreenSize = () => setIsMobile(window.innerWidth < 768);
+  
     const fetchSession = async () => {
-      const supabase = createBrowserClient(process.env.NEXT_PUBLIC_SUPABASE_URL, process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY);
+      const supabase = createBrowserClient(
+        process.env.NEXT_PUBLIC_SUPABASE_URL,
+        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+      );
+  
       const { data: { session } } = await supabase.auth.getSession();
-
+  
       if (!session) {
         router.push("/login");
       } else {
         setSession(session);
       }
     };
+  
+    checkScreenSize();
+    window.addEventListener('resize', checkScreenSize);
     fetchSession();
-  }, []);
+  
+    return () => {
+      window.removeEventListener('resize', checkScreenSize);
+    };
+  }, [router]);
 
   const [resultsReady, setResultsReady] = useState(false);
   const [videoId, setVideoId] = useState(null);
@@ -40,7 +54,7 @@ export default function SongTranslatorApp() {
   const YOUTUBE_API_ROUTE = '/api/youtube';
   const TRANSLATE_API_ROUTE = '/api/translate';
 
-  const FETCH_TIMEOUT_MS = 5000;
+  const FETCH_TIMEOUT_MS = 7000;
 
   const handleSearch = async (e) => {
     e.preventDefault();
@@ -182,16 +196,18 @@ export default function SongTranslatorApp() {
         )}
 
         <div className="flex-1 overflow-y-auto px-4 md:px-10 pb-8 custom-scrollbar">
-          <div className="w-full max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="w-full max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-6">
+            {!isMobile && (
             <div className="bg-white/10 rounded-xl p-6 shadow-inner">
               <h2 className="text-xl font-semibold mb-4 text-indigo-300 text-center">Original Lyrics</h2>
               <pre className="text-lg leading-relaxed whitespace-pre-wrap text-white text-center">{lyrics || "No original lyrics loaded."}</pre>
             </div>
-            <div className="bg-white/10 rounded-xl p-6 shadow-inner">
-              <h2 className="text-xl font-semibold mb-4 text-pink-400 capitalize text-center">Translated ({language})</h2>
-              <pre className="text-lg leading-relaxed whitespace-pre-wrap text-white text-center">{translatedLyrics || "No translation loaded."}</pre>
+            )}
+            <div className="bg-white/10 rounded-xl p-6 shadow-inner col-span-1">
+            <h2 className="text-xl font-semibold mb-4 text-pink-400 capitalize text-center">Translated ({language})</h2>
+            <pre className="text-lg leading-relaxed whitespace-pre-wrap text-white text-center">{translatedLyrics || "No translation loaded."}</pre>
             </div>
-          </div>
+            </div>
         </div>
 
       </div>
