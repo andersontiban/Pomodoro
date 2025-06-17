@@ -1,26 +1,26 @@
-'use client';
+// 'use client';
 
-import { useEffect } from 'react';
-import { useRouter } from 'next/navigation';
-import { supabase } from '../../../utils/supabase/client';
+// import { useEffect } from 'react';
+// import { useRouter } from 'next/navigation';
+// import { supabase } from '../../../utils/supabase/client';
 
-export default function AuthCallbackPage() {
-  const router = useRouter();
+// export default function AuthCallbackPage() {
+//   const router = useRouter();
 
-  useEffect(() => {
-    async function confirmUser() {
-      const { error, data } = await supabase.auth.getSessionFromUrl();
+//   useEffect(() => {
+//     async function confirmUser() {
+//       const { error, data } = await supabase.auth.getSessionFromUrl();
 
-      if (error) {
-        console.error('Error confirming email:', error.message);
-      }
+//       if (error) {
+//         console.error('Error confirming email:', error.message);
+//       }
 
-      // Redirect either way
-      router.push('/login');
-    }
+//       // Redirect either way
+//       router.push('/login');
+//     }
 
-    confirmUser();
-  }, [router]);
+//     confirmUser();
+//   }, [router]);
 
-  return null;
-}
+//   return null;
+// }
