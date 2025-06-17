@@ -11,7 +11,7 @@ export async function POST(req) {
   try {
     const { lyrics, language } = await req.json()
 
-    const message = `Translate the following text to ${language}, dont return anything else: \n\n${lyrics}`
+    const message = `Translate the following to ${language}, dont return anything else: \n\n${lyrics}`
 
     const response = await client.chat.completions.create({
       messages: [
