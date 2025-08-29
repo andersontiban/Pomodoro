@@ -50,11 +50,11 @@ export default function SongTranslatorApp() {
   const [language, setLanguage] = useState('en');
   const [error, setError] = useState('');
 
-  const LYRICS_API_URL = 'https://api.lyrics.ovh/v1/';
+  const LYRICS_API_URL = 'https://lrclib.net/api/search?track_name=';
   const YOUTUBE_API_ROUTE = '/api/youtube';
   const TRANSLATE_API_ROUTE = '/api/translate';
 
-  const FETCH_TIMEOUT_MS = 7000;
+  const FETCH_TIMEOUT_MS = 7000000;
 
   const handleSearch = async (e) => {
     e.preventDefault();
@@ -71,7 +71,10 @@ export default function SongTranslatorApp() {
     }, FETCH_TIMEOUT_MS);
 
     try {
-      const lyricsPromise = fetch(`${LYRICS_API_URL}${encodeURIComponent(artist)}/${encodeURIComponent(song)}`, { signal: controller.signal });
+      const searchUrl = `${LYRICS_API_URL}${encodeURIComponent(song)}&artist_name=${encodeURIComponent(artist)}`;
+
+      // const lyricsPromise = fetch(`${LYRICS_API_URL}${encodeURIComponent(artist)}/${encodeURIComponent(song)}`, { signal: controller.signal });
+      const lyricsPromise = fetch(searchUrl, { signal: controller.signal });
       const ytPromise = fetch(YOUTUBE_API_ROUTE, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -86,16 +89,26 @@ export default function SongTranslatorApp() {
       const lyricsData = await lyricsRes.json();
       const ytData = await ytRes.json();
 
-      if (lyricsData.lyrics) {
-        const cleanedLyrics = lyricsData.lyrics.replace(/\r\n/g, '\n').replace(/\r/g, '\n');
-        setLyrics(cleanedLyrics);
-        await translateLyrics(cleanedLyrics, language);
+      // if (lyricsData.lyrics) {
+      //   const cleanedLyrics = lyricsData.lyrics.replace(/\r\n/g, '\n').replace(/\r/g, '\n');
+      //   setLyrics(cleanedLyrics);
+      //   await translateLyrics(cleanedLyrics, language);
+      // } else {
+      //   setLyrics('No lyrics found for this song.');
+      //   setTranslatedLyrics('No translation found as no lyrics were found.');
+      //   setResultsReady(true);
+      //   setLoading(false);
+      //   return;
+      // }
+
+      if (Array.isArray(lyricsData) && lyricsData.length > 0) {
+        const bestMatch = lyricsData[0];
+        const lyricsText = bestMatch.plainLyrics || 'No lyrics found.';
+        setLyrics(lyricsText);
+        await translateLyrics(lyricsText, language); // <-- pass language separately
       } else {
-        setLyrics('No lyrics found for this song.');
-        setTranslatedLyrics('No translation found as no lyrics were found.');
-        setResultsReady(true);
-        setLoading(false);
-        return;
+        setLyrics('No lyrics found.');
+        setTranslatedLyrics('No translation found.');
       }
 
       if (ytData.videoId) {

@@ -10,8 +10,7 @@ const client = new OpenAI({
 export async function POST(req) {
   try {
     const { lyrics, language } = await req.json()
-
-    const message = `Translate the following to ${language}, dont return anything else: \n${lyrics}`
+    const message = `Translate to ${language}. Return ONLY the translated text:\n${lyrics}`
 
     const response = await client.chat.completions.create({
       messages: [
