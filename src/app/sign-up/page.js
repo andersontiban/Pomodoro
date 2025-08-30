@@ -51,7 +51,6 @@ export default function SignupPage() {
         if (result.success) {
           // Supabase signUp often requires email confirmation by default.
           // You might want to show a message about that.
-          alert("Signup successful! Please check your email to confirm your account, then log in.");
           setName('');
           setEmail('');
           setPassword('');
