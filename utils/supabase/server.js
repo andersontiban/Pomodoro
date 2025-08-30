@@ -2,14 +2,20 @@
 import { createServerClient } from '@supabase/ssr'
 import { cookies } from 'next/headers'
 
-export async function createClient() {
+/**
+ * Creates a Supabase client.
+ * @param {boolean} useServiceRole - if true, uses SERVICE_ROLE_KEY for admin actions (server-side only)
+ */
+export async function createClient({ useServiceRole = false } = {}) {
   const cookieStore = await cookies()
 
-  // Create a server's supabase client with newly configured cookie,
-  // which could be used to maintain user's session
+  const supabaseKey = useServiceRole
+    ? process.env.SUPABASE_SERVICE_ROLE_KEY
+    : process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+
   return createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
+    supabaseKey,
     {
       cookies: {
         getAll() {
@@ -21,9 +27,7 @@ export async function createClient() {
               cookieStore.set(name, value, options)
             )
           } catch {
-            // The `setAll` method was called from a Server Component.
-            // This can be ignored if you have middleware refreshing
-            // user sessions.
+            // Can ignore if called from a server component without proper headers
           }
         },
       },
@@ -32,9 +36,8 @@ export async function createClient() {
 }
 
 export async function getUser() {
-  const {auth} = createClient();
-  const user = (await auth.getUser()).data.user;
-
+  const supabase = await createClient();
+  const user = (await supabase.auth.getUser()).data.user;
   return user;
 }
 
